@@ -45,8 +45,12 @@ export default class CameraExample extends React.Component {
     } else if (this.state.image.uri) {
       return (
         <View>
-          <Text>{this.state.image.uri}</Text>
-          <Text>{FileSystem.documentDirectory}</Text>
+          <Image
+            style={{ width: 50, height: 50 }}
+            source={{ uri: this.state.image.uri }}
+          />
+          {/* <Text>{this.state.image.uri}</Text> */}
+          {/* <Text>{FileSystem.documentDirectory}</Text> */}
         </View>
       );
     } else {
