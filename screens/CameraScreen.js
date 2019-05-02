@@ -1,11 +1,12 @@
 import React from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
+import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { Camera, FileSystem, Permissions } from 'expo';
 
 export default class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
+    image: {}
   };
 
   async componentDidMount() {
@@ -29,9 +30,8 @@ export default class CameraExample extends React.Component {
         quality: 0
       });
       // use cache uri to save image to system
-      FileSystem.copyAsync({
-        from: photo.uri,
-        to: FileSystem.documentDirectory + 'Downloads'
+      this.setState({
+        image: photo
       });
     }
   }
@@ -42,6 +42,13 @@ export default class CameraExample extends React.Component {
       return <View />;
     } else if (hasCameraPermission === false) {
       return <Text>No access to camera</Text>;
+    } else if (this.state.image.uri) {
+      return (
+        <View>
+          <Text>{this.state.image.uri}</Text>
+          <Text>{FileSystem.documentDirectory}</Text>
+        </View>
+      );
     } else {
       return (
         <View style={{ flex: 1 }}>
