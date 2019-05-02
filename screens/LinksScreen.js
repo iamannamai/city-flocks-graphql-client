@@ -1,6 +1,6 @@
 import React from 'react';
 import { ScrollView, StyleSheet,Text,View } from 'react-native';
-import { MapView,Location,Permissions,TaskManager } from 'expo';
+import { MapView,Location,Permissions,TaskManager, Notifications } from 'expo';
 import { ExpoLinksView } from '@expo/samples';
 
 export default class LinksScreen extends React.Component {
@@ -26,17 +26,23 @@ export default class LinksScreen extends React.Component {
     }
     let location = await Location.getCurrentPositionAsync({});
     this.setState({ location });
-    
+
   };
 
   render() {
+	let hanoverAndBeaver = { latitude: 40.705387, longitude: -74.008957 };
+	let hanoverAndExchange = { latitude: 40.705537, longitude: -74.009145 };
+	let wallAndWilliam = { identifier: 'wallAndWilliam', latitude: 40.706356, longitude: -74.009529 };
+	let empireState = { latitude: 40.748393, longitude: -73.985622 };
+	let radius = 12;
+
     let text = 'Waiting..';
     if (this.state.errorMessage) {
       text = this.state.errorMessage;
     } else if (this.state.location) {
       text = JSON.stringify(this.state.location);
     }
-    Location.startGeofencingAsync("geofence",[{ latitude: 40.7051276, longitude: -74.0092019,radius: 10 }]);
+    Location.startGeofencingAsync("geofence",[{...wallAndWilliam, radius}]);
     return (
       //   <ScrollView style={styles.container}>
       //     {/* Go ahead and delete ExpoLinksView and replace it with your
@@ -54,7 +60,7 @@ export default class LinksScreen extends React.Component {
         }}
       >
         <MapView.Marker
-          coordinate={{ latitude: 40.7051276, longitude: -74.0092019 }}
+          coordinate={wallAndWilliam}
           name="Test"
           description="This is a test"
         />
@@ -63,17 +69,46 @@ export default class LinksScreen extends React.Component {
   }
 }
 
-TaskManager.defineTask("geofence", ({data: {eventType,region}, error}) => {
+// const someNotification = Notifications.addListener((obj) => {
+// 	// const { origin, data, remote } = obj
+// 	console.log('I listened!');
+// 	console.log(obj);
+// });
+
+// const plainNotification = {
+// 	title: 'Test Notification',
+// 	body: 'Her is the body of the notification'
+// };
+
+TaskManager.defineTask("geofence", ({data, error}) => {
   if(error) {
     return;
   }
-  if(eventType === Location.GeofencingEventType.Enter) {
-    console.log("You entered region:", region);
+  if(data.eventType === Location.GeofencingEventType.Enter) {
+	console.log("You entered region:", data.region);
+	// Notifications.presentLocalNotificationAsync(someNotification);
+	// console.log(data);
+	const someNotification = Notifications.addListener((obj) => {
+		// const { origin, data, remote } = obj
+		console.log('I listened!');
+		console.log(obj);
+	});
+	console.log(someNotification);
   }
-  else if(eventType === Location.GeofencingEventType.Exit) {
-    console.log("You left region:", region);
+  else if(data.eventType === Location.GeofencingEventType.Exit) {
+	console.log("You left region:", data.region);
+	// Notifications.presentLocalNotificationAsync(someNotification);
+	const someNotification = Notifications.addListener((obj) => {
+		// const { origin, data, remote } = obj
+		console.log('I listened!');
+		console.log(obj);
+	});
+	console.log(someNotification);
+	// console.log(data);
   }
 })
+
+
 
 const styles = StyleSheet.create({
   container: {
