@@ -1,16 +1,17 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
-import { Camera, FileSystem, Permissions } from 'expo';
+import { Camera, MediaLibrary, Permissions } from 'expo';
 
 export default class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
     type: Camera.Constants.Type.back,
-    image: {}
+    asset: {}
   };
 
   async componentDidMount() {
     const { status } = await Permissions.askAsync(Permissions.CAMERA);
+    await Permissions.askAsync(Permissions.CAMERA_ROLL);
 
     this.setState({ hasCameraPermission: status === 'granted' });
   }
@@ -30,8 +31,10 @@ export default class CameraExample extends React.Component {
         quality: 0
       });
       // use cache uri to save image to system
+      const asset = await MediaLibrary.createAssetAsync(photo.uri);
+
       this.setState({
-        image: photo
+        asset
       });
     }
   }
@@ -42,15 +45,14 @@ export default class CameraExample extends React.Component {
       return <View />;
     } else if (hasCameraPermission === false) {
       return <Text>No access to camera</Text>;
-    } else if (this.state.image.uri) {
+    } else if (this.state.asset.uri) {
       return (
         <View>
           <Image
             style={{ width: 50, height: 50 }}
-            source={{ uri: this.state.image.uri }}
+            source={{ uri: this.state.asset.uri}}
           />
-          {/* <Text>{this.state.image.uri}</Text> */}
-          {/* <Text>{FileSystem.documentDirectory}</Text> */}
+          {/* <Text>{`(${this.state.asset.location.latitude},${this.state.asset.location.longitude}`}</Text> */}
         </View>
       );
     } else {
