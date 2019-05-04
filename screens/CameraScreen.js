@@ -1,7 +1,9 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { Camera, MediaLibrary, Permissions } from 'expo';
-
+import { RNS3 } from 'react-native-aws3';
+import {awsS3Options} from '../services/configs';
+console.log(awsS3Options);
 export default class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
@@ -33,6 +35,29 @@ export default class CameraExample extends React.Component {
       // use cache uri to save image to system
       const asset = await MediaLibrary.createAssetAsync(photo.uri);
 
+      const file = {
+        // `uri` can also be a file system path (i.e. file://)
+        uri: photo.uri,
+        name: 'image.jpg',
+        type: 'image/jpg'
+      };
+
+      RNS3.put(file, awsS3Options).then(response => {
+        if (response.status !== 201)
+          throw new Error("Failed to upload image to S3");
+        console.log(response.body);
+        /**
+         * {
+         *   postResponse: {
+         *     bucket: "your-bucket",
+         *     etag : "9f620878e06d28774406017480a59fd4",
+         *     key: "uploads/image.png",
+         *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+         *   }
+         * }
+         */
+      });
+
       this.setState({
         asset
       });
@@ -52,7 +77,7 @@ export default class CameraExample extends React.Component {
             style={{ width: 50, height: 50 }}
             source={{ uri: this.state.asset.uri}}
           />
-          {/* <Text>{`(${this.state.asset.location.latitude},${this.state.asset.location.longitude}`}</Text> */}
+          <Text>{`(${this.state.asset.location}`}</Text>
         </View>
       );
     } else {
