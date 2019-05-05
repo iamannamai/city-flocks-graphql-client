@@ -1,1 +1,1 @@
-export {default as awsS3Options} from './awsUpload';
+export * from './awsUpload';

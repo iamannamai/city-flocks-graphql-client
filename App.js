@@ -3,6 +3,14 @@ import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
 import AppNavigator from './navigation/AppNavigator';
 
+import Amplify from 'aws-amplify';
+import {authConfig, storageConfig} from './services/configs';
+
+Amplify.configure({
+    Auth: authConfig,
+    Storage: storageConfig
+});
+
 export default class App extends React.Component {
   state = {
     isLoadingComplete: false,

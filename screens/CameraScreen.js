@@ -1,9 +1,10 @@
 import React from 'react';
 import { Text, View, TouchableOpacity, Image } from 'react-native';
 import { Camera, MediaLibrary, Permissions } from 'expo';
-import { RNS3 } from 'react-native-aws3';
-import {awsS3Options} from '../services/configs';
-console.log(awsS3Options);
+// import { RNS3 } from 'react-native-aws3';
+import {Storage} from 'aws-amplify';
+// import RNFetchBlob from 'react-native-fetch-blob';
+
 export default class CameraExample extends React.Component {
   state = {
     hasCameraPermission: null,
@@ -35,28 +36,56 @@ export default class CameraExample extends React.Component {
       // use cache uri to save image to system
       const asset = await MediaLibrary.createAssetAsync(photo.uri);
 
-      const file = {
-        // `uri` can also be a file system path (i.e. file://)
-        uri: photo.uri,
-        name: 'image.jpg',
-        type: 'image/jpg'
-      };
+      // Upload with credentials...
+      // const file = {
+      //   // `uri` can also be a file system path (i.e. file://)
+      //   uri: photo.uri,
+      //   name: 'image.jpg',
+      //   type: 'image/jpg'
+      // };
 
-      RNS3.put(file, awsS3Options).then(response => {
-        if (response.status !== 201)
-          throw new Error("Failed to upload image to S3");
-        console.log(response.body);
-        /**
-         * {
-         *   postResponse: {
-         *     bucket: "your-bucket",
-         *     etag : "9f620878e06d28774406017480a59fd4",
-         *     key: "uploads/image.png",
-         *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
-         *   }
-         * }
-         */
+      // RNS3.put(file, awsS3Options).then(response => {
+      //   if (response.status !== 201)
+      //     throw new Error("Failed to upload image to S3");
+      //   console.log(response.body);
+      //   /**
+      //    * {
+      //    *   postResponse: {
+      //    *     bucket: "your-bucket",
+      //    *     etag : "9f620878e06d28774406017480a59fd4",
+      //    *     key: "uploads/image.png",
+      //    *     location: "https://your-bucket.s3.amazonaws.com/uploads%2Fimage.png"
+      //    *   }
+      //    * }
+      //    */
+      // });
+
+      // const imageData = await RNFetchBlob.fs.readFile(photo.uri, 'base64');
+      // const imageUpload = new Buffer(imageData, 'base64');
+      const uriToBlob = (url) => {
+        return new Promise((resolve, reject) => {
+            var xhr = new XMLHttpRequest();
+            xhr.onerror = reject;
+            xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4) {
+                    resolve(xhr.response);
+                }
+            };
+            xhr.open('GET', url);
+            xhr.responseType = 'blob'; // convert type
+            xhr.send();
+        })
+      }
+
+      const response = await uriToBlob(photo.uri);
+      const fileName = 'test-image.jpg';
+
+      console.log(response);
+      const res = await Storage.put(fileName, response, {
+        contentType: 'image/jpg'
       });
+
+      console.log(res);
 
       this.setState({
         asset
