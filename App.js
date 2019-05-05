@@ -1,6 +1,10 @@
 import React from 'react';
+import { Provider } from 'react-redux';
+
 import { Platform, StatusBar, StyleSheet, View } from 'react-native';
 import { AppLoading, Asset, Font, Icon } from 'expo';
+
+import store from './store';
 import AppNavigator from './navigation/AppNavigator';
 
 export default class App extends React.Component {
@@ -19,10 +23,12 @@ export default class App extends React.Component {
       );
     } else {
       return (
-        <View style={styles.container}>
-          {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-          <AppNavigator />
-        </View>
+        <Provider store={store}>
+          <View style={styles.container}>
+            {Platform.OS === "ios" && <StatusBar barStyle="default" />}
+            <AppNavigator />
+          </View>
+        </Provider>
       );
     }
   }

@@ -1,5 +1,7 @@
 import React from 'react';
 import {
+  AsyncStorage,
+  Button,
   Image,
   Platform,
   ScrollView,
@@ -10,11 +12,20 @@ import {
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
-import { MonoText } from '../components/StyledText';
+import { MonoText } from "../components/StyledText";
 
 export default class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
+  };
+
+  _showMoreApp = () => {
+    this.props.navigation.navigate('Other');
+  };
+
+  _signOutAsync = async () => {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate('Auth');
   };
 
   render() {
@@ -31,6 +42,11 @@ export default class HomeScreen extends React.Component {
               style={styles.welcomeImage}
             />
           </View>
+
+          <View>
+        <Button title="Show me more of the app" onPress={this._showMoreApp} />
+        <Button title="Actually, sign me out :)" onPress={this._signOutAsync} />
+      </View>
 
           <View style={styles.getStartedContainer}>
             {this._maybeRenderDevelopmentModeWarning()}
