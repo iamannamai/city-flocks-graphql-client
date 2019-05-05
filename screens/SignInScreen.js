@@ -1,4 +1,7 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
+import { Form,Input,Item } from 'native-base';
 import {
   AsyncStorage,
   Button,
@@ -7,9 +10,14 @@ import {
   View,
 } from 'react-native';
 
-export default class SignInScreen extends React.Component {
+class SignInScreen extends React.Component {
   static navigationOptions = {
     title: "Please sign in"
+  };
+
+  _signInAsync = async () => {
+    await AsyncStorage.setItem("userToken", "abc");
+    this.props.navigation.navigate("Main");
   };
 
   render() {
@@ -26,33 +34,51 @@ export default class SignInScreen extends React.Component {
             />
           </View>
           <View>
+          <Form>
+            <Item>
+              <Input placeholder="Username" textContentType="username" />
+            </Item>
+            <Item last>
+              <Input placeholder="Password" secureTextEntry={true} textContentType="password" />
+            </Item>
             <Button title="Sign in!" onPress={this._signInAsync} />
+            <Button title="Create an account!" onPress={this._signInAsync} />
+          </Form>
           </View>
       </View>
     );
   }
-
-  _signInAsync = async () => {
-    await AsyncStorage.setItem("userToken", "abc");
-    this.props.navigation.navigate("Main");
-  };
 }
-  
+
+const mapDispatch = dispatch => {
+    return {
+      handleSubmit(evt) {
+        evt.preventDefault()
+        const formName = evt.target.name
+        const email = evt.target.email.value;
+        const password = evt.target.password.value
+        dispatch(auth(email, password, formName));
+      }
+    }
+}
+
+export default connect(null,mapDispatch)(SignInScreen);
+
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-      },
-    welcomeContainer: {
-        alignItems: 'center',
-        marginTop: 10,
-        marginBottom: 20,
-      },
-      welcomeImage: {
-        width: 100,
-        height: 80,
-        resizeMode: 'contain',
-        marginTop: 3,
-        marginLeft: -10,
-      },
-})
+  container: {
+    flex: 1,
+    backgroundColor: "#fff"
+  },
+  welcomeContainer: {
+    alignItems: "center",
+    marginTop: 10,
+    marginBottom: 20
+  },
+  welcomeImage: {
+    width: 100,
+    height: 80,
+    resizeMode: "contain",
+    marginTop: 3,
+    marginLeft: -10
+  }
+});

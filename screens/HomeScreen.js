@@ -44,8 +44,7 @@ export default class HomeScreen extends React.Component {
           </View>
 
           <View>
-        <Button title="Show me more of the app" onPress={this._showMoreApp} />
-        <Button title="Actually, sign me out :)" onPress={this._signOutAsync} />
+        <Button title="Sign me out :)" onPress={this._signOutAsync} />
       </View>
 
           <View style={styles.getStartedContainer}>
