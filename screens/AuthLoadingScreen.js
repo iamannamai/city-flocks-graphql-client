@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import {
   ActivityIndicator,
-  AsyncStorage,
   StatusBar,
   View,
 } from 'react-native';
@@ -40,4 +39,4 @@ const mapState = state => {
   }
 }
 
-export default connect(mapState)(AuthLoadingScreen)
+export default connect(mapState)(AuthLoadingScreen);
