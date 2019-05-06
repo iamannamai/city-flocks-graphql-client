@@ -1,6 +1,9 @@
 import React from 'react';
-import { Text, View, TouchableOpacity, Image } from 'react-native';
+import { Text, View, TouchableOpacity, Image, Alert } from 'react-native';
 import { Camera, MediaLibrary, Permissions } from 'expo';
+import { storage } from '../Secrets/firestore'
+
+
 
 export default class CameraExample extends React.Component {
   state = {
@@ -24,6 +27,7 @@ export default class CameraExample extends React.Component {
     });
   }
 
+
   async takePicture() {
     if (this.camera) {
       // photo contains { uri, width, height, exif, base64 }
@@ -32,11 +36,43 @@ export default class CameraExample extends React.Component {
       });
       // use cache uri to save image to system
       const asset = await MediaLibrary.createAssetAsync(photo.uri);
+      if (!photo.cancelled) {
+        this.uploadImage(photo.uri, "testImage").then(() => {
+          Alert.alert('Success')
+        }).catch((err) => {
+          Alert.alert(err)
+        })
+      }
+
+
+      // const uploadTask = storage.ref(`image/${photo.uri}`).put(photo)
+
+      // uploadTask.on('state_changed',
+      //   (snapshot) => {
+      //     // progress function
+      //   },
+      //   (error) => {
+      //     //error function
+      //     console.log(error)
+      //   },
+      //   () => {
+      //     //complete function
+      //     storage.ref('image').child(photo.uri).getDownloadURL().then(url => {
+      //       console.log(url)
+      //     })
+      //   });
 
       this.setState({
         asset
       });
     }
+  }
+
+  uploadImage = async (uri, imageName) => {
+    const response = await fetch(uri)
+    const blob = await response.blob()
+    let ref = storage.ref().child(`images/${imageName}`)
+    return ref.put(blob)
   }
 
   render() {
@@ -50,7 +86,7 @@ export default class CameraExample extends React.Component {
         <View>
           <Image
             style={{ width: 50, height: 50 }}
-            source={{ uri: this.state.asset.uri}}
+            source={{ uri: this.state.asset.uri }}
           />
           {/* <Text>{`(${this.state.asset.location.latitude},${this.state.asset.location.longitude}`}</Text> */}
         </View>
