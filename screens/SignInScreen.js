@@ -22,7 +22,7 @@ class SignInScreen extends React.Component {
 
   _signInAsync = async () => {
     console.log(`Username: ${this.state.username} \nPassword: ${this.state.password}`);
-    this.props.handleSubmit(this.state.username, this.state.password);
+    await this.props.handleSubmit(this.state.username, this.state.password);
     console.log(this.props.user)
     if (this.props.user.username) this.props.navigation.navigate("Main");
     else {
@@ -81,7 +81,8 @@ export default connect(mapLogin,mapDispatch)(SignInScreen);
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff"
+    backgroundColor: "#fff",
+    justifyContent: "center"
   },
   welcomeContainer: {
     alignItems: "center",
