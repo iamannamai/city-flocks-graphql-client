@@ -6,24 +6,43 @@ import TabBarIcon from '../components/TabBarIcon';
 import HomeScreen from '../screens/HomeScreen';
 import LinksScreen from '../screens/LinksScreen';
 import SettingsScreen from '../screens/SettingsScreen';
+import UserScreen from '../screens/UserScreen';
+
+// const HomeStack = createStackNavigator({
+//   Home: HomeScreen,
+// });
+
+// HomeStack.navigationOptions = {
+//   tabBarLabel: 'Home',
+//   tabBarIcon: ({ focused }) => (
+//     <TabBarIcon
+//       focused={focused}
+//       name={
+//         Platform.OS === 'ios'
+//           ? `ios-information-circle${focused ? '' : '-outline'}`
+//           : 'md-information-circle'
+//       }
+//     />
+//   ),
+// };
 
 const HomeStack = createStackNavigator({
-  Home: HomeScreen,
-});
+	Home: UserScreen,
+  });
 
-HomeStack.navigationOptions = {
-  tabBarLabel: 'Home',
-  tabBarIcon: ({ focused }) => (
-    <TabBarIcon
-      focused={focused}
-      name={
-        Platform.OS === 'ios'
-          ? `ios-information-circle${focused ? '' : '-outline'}`
-          : 'md-information-circle'
-      }
-    />
-  ),
-};
+  HomeStack.navigationOptions = {
+	tabBarLabel: 'User',
+	tabBarIcon: ({ focused }) => (
+	  <TabBarIcon
+		focused={focused}
+		name={
+		  Platform.OS === 'ios'
+			? `ios-information-circle${focused ? '' : '-outline'}`
+			: 'md-information-circle'
+		}
+	  />
+	),
+  };
 
 const LinksStack = createStackNavigator({
   Links: LinksScreen,
@@ -55,6 +74,6 @@ SettingsStack.navigationOptions = {
 
 export default createBottomTabNavigator({
   HomeStack,
-  LinksStack,
-  SettingsStack,
+//   LinksStack,
+//   SettingsStack,
 });
