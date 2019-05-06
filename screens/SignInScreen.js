@@ -1,23 +1,34 @@
 import React from 'react';
 import { connect } from 'react-redux';
 
-import { Form,Input,Item } from 'native-base';
-import {
-  AsyncStorage,
-  Button,
-  Image,
-  StyleSheet,
-  View,
-} from 'react-native';
+import { Form,Input,Item,Toast } from 'native-base';
+import { Button,Image,Keyboard,StyleSheet,View } from 'react-native';
+
+import { auth } from '../store/user';
 
 class SignInScreen extends React.Component {
+  state = {
+    username: '',
+    password: ''
+  }
+
   static navigationOptions = {
     title: "Please sign in"
   };
 
+  handleChange(name,value) {
+    this.setState({[name]: value})
+  }
+
   _signInAsync = async () => {
-    await AsyncStorage.setItem("userToken", "abc");
-    this.props.navigation.navigate("Main");
+    console.log(`Username: ${this.state.username} \nPassword: ${this.state.password}`);
+    this.props.handleSubmit(this.state.username, this.state.password);
+    console.log(this.props.user)
+    if (this.props.user.username) this.props.navigation.navigate("Main");
+    else {
+      Keyboard.dismiss();
+      Toast.show({text: "Invalid username or password", buttonText: "Okay"})
+    };
   };
 
   render() {
@@ -36,10 +47,10 @@ class SignInScreen extends React.Component {
           <View>
           <Form>
             <Item>
-              <Input placeholder="Username" textContentType="username" />
+              <Input placeholder="Username" textContentType="username" onChangeText={(text) => this.handleChange("username",text.toLowerCase())} />
             </Item>
             <Item last>
-              <Input placeholder="Password" secureTextEntry={true} textContentType="password" />
+              <Input placeholder="Password" secureTextEntry={true} textContentType="password" onChangeText={(text) => this.handleChange("password",text)} />
             </Item>
             <Button title="Sign in!" onPress={this._signInAsync} />
             <Button title="Create an account!" onPress={this._signInAsync} />
@@ -50,19 +61,22 @@ class SignInScreen extends React.Component {
   }
 }
 
+const mapLogin = state => {
+  return {
+    user: state.user,
+    error: state.user.error
+  }
+}
+
 const mapDispatch = dispatch => {
     return {
-      handleSubmit(evt) {
-        evt.preventDefault()
-        const formName = evt.target.name
-        const email = evt.target.email.value;
-        const password = evt.target.password.value
-        dispatch(auth(email, password, formName));
+      handleSubmit(username,password) {
+        dispatch(auth(username, password, 'login'));
       }
     }
 }
 
-export default connect(null,mapDispatch)(SignInScreen);
+export default connect(mapLogin,mapDispatch)(SignInScreen);
 
 const styles = StyleSheet.create({
   container: {

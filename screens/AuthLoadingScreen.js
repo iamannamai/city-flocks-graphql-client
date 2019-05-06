@@ -1,4 +1,6 @@
 import React from 'react';
+import { connect } from 'react-redux';
+
 import {
   ActivityIndicator,
   AsyncStorage,
@@ -6,7 +8,7 @@ import {
   View,
 } from 'react-native';
 
-export default class AuthLoadingScreen extends React.Component {
+class AuthLoadingScreen extends React.Component {
   constructor(props) {
     super(props);
     this._bootstrapAsync();
@@ -14,7 +16,7 @@ export default class AuthLoadingScreen extends React.Component {
 
   // Fetch the token from storage then navigate to our appropriate place
   _bootstrapAsync = async () => {
-    const userToken = await AsyncStorage.getItem('userToken');
+    const userToken = this.props.user.username;
 
     // This will switch to the App screen or Auth screen and this loading
     // screen will be unmounted and thrown away.
@@ -31,3 +33,11 @@ export default class AuthLoadingScreen extends React.Component {
     );
   }
 }
+
+const mapState = state => {
+  return {
+    user: state.user
+  }
+}
+
+export default connect(mapState)(AuthLoadingScreen)
