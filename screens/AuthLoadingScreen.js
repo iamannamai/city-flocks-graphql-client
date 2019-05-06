@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import {
   ActivityIndicator,
-  AsyncStorage,
   StatusBar,
   View,
 } from 'react-native';
