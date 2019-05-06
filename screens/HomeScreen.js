@@ -1,5 +1,8 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import {
+  AsyncStorage,
+  Button,
   Image,
   Platform,
   ScrollView,
@@ -10,11 +13,21 @@ import {
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
-import { MonoText } from '../components/StyledText';
+import { logout } from '../store';
+import { MonoText } from "../components/StyledText";
 
-export default class HomeScreen extends React.Component {
+class HomeScreen extends React.Component {
   static navigationOptions = {
     header: null,
+  };
+
+  _showMoreApp = () => {
+    this.props.navigation.navigate('Other');
+  };
+
+  _signOutAsync = async () => {
+    await this.props.logout();
+    this.props.navigation.navigate('Auth');
   };
 
   render() {
@@ -30,7 +43,12 @@ export default class HomeScreen extends React.Component {
               }
               style={styles.welcomeImage}
             />
+            <Text style={styles.getStartedText} >{`Welcome Back ${this.props.user.username}`}</Text>
           </View>
+
+          <View>
+        <Button title="Sign me out :)" onPress={this._signOutAsync} />
+      </View>
 
           <View style={styles.getStartedContainer}>
             {this._maybeRenderDevelopmentModeWarning()}
@@ -97,6 +115,20 @@ export default class HomeScreen extends React.Component {
     );
   };
 }
+
+const mapState = state => {
+  return {
+    user: state.user
+  }
+}
+
+const mapDispatch = dispatch => {
+  return {
+    logout: () => dispatch(logout())
+  }
+}
+
+export default connect(mapState,mapDispatch)(HomeScreen)
 
 const styles = StyleSheet.create({
   container: {
