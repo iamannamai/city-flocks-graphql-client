@@ -40,4 +40,4 @@ const mapState = state => {
   }
 }
 
-export default connect(mapState)(AuthLoadingScreen)
+export default connect(mapState)(AuthLoadingScreen);
