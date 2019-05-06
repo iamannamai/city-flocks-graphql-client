@@ -19,6 +19,7 @@ export default class App extends React.Component {
       Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
       Ionicons: require("@expo/vector-icons/fonts/Ionicons.ttf"),
     });
+    // Should this be isLoadingComplete?
     this.setState({ loading: false });
   }
 

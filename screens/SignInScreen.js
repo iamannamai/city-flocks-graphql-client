@@ -36,11 +36,7 @@ class SignInScreen extends React.Component {
       <View style={styles.container}>
           <View style={styles.welcomeContainer}>
             <Image
-              source={
-                __DEV__
-                  ? require("../assets/images/robot-dev.png")
-                  : require("../assets/images/robot-prod.png")
-              }
+              source={require("../assets/images/splash.png")}
               style={styles.welcomeImage}
             />
           </View>
@@ -89,8 +85,7 @@ const styles = StyleSheet.create({
     marginBottom: 20
   },
   welcomeImage: {
-    width: 100,
-    height: 80,
+    width: 200,
     resizeMode: "contain",
     marginTop: 3,
     marginLeft: -10
