@@ -4,6 +4,7 @@ import { Camera, MediaLibrary, Permissions } from 'expo';
 // import { RNS3 } from 'react-native-aws3';
 import {Storage} from 'aws-amplify';
 // import RNFetchBlob from 'react-native-fetch-blob';
+import CameraView from '../components/CameraView';
 
 export default class CameraExample extends React.Component {
   state = {
@@ -112,7 +113,7 @@ export default class CameraExample extends React.Component {
     } else {
       return (
         <View style={{ flex: 1 }}>
-          <Camera style={{ flex: 1 }} type={this.state.type} ref={ref => { this.camera = ref; }}>
+          {/* <Camera style={{ flex: 1 }} type={this.state.type} ref={ref => { this.camera = ref; }}>
             <View
               style={{
                 flex: 1,
@@ -132,7 +133,8 @@ export default class CameraExample extends React.Component {
                 </Text>
               </TouchableOpacity>
             </View>
-          </Camera>
+          </Camera> */}
+          <CameraView />
         </View>
       );
     }
