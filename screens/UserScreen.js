@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import {
-  Container,
   Button,
   Card,
   CardItem,
@@ -10,22 +9,19 @@ import {
   Text,
   Icon,
   H2,
+  H3,
   List,
   ListItem,
   Thumbnail,
   Left,
   Right,
-  Content,
-  Accordion
+  Content
 } from 'native-base';
 
 import { logout } from '../store';
-const logo = require('../assets/images/avataaars.png')
-const dataArray = [
-  { title: "First Element", content: "Lorem ipsum dolor sit amet" },
-  { title: "Second Element", content: "Lorem ipsum dolor sit amet" },
-  { title: "Third Element", content: "Lorem ipsum dolor sit amet" }
-];
+const avatar = require('../assets/images/avataaars.png');
+
+import { getEventsThunk } from '../store/event';
 
 class UserScreen extends Component {
   _signOutAsync = async () => {
@@ -33,20 +29,27 @@ class UserScreen extends Component {
     this.props.navigation.navigate('Auth');
   }
 
+  componentDidMount() {
+    this.props.getEvents();
+  }
+
   render() {
+	let { username } = this.props.user;
+	username = username[0].toUpperCase() + username.slice(1);
+	let { allEvents } = this.props.events;
     return (
       <Content>
         <Card>
           <CardItem style={{
             flexDirection: 'column'
           }}>
-            <Icon name='person' />
-            <H2>{`Welcome Back ${this.props.user.username}`}</H2>
-            <Text>Testing</Text>
+            <Thumbnail source={avatar} />
+            <H2>{`Welcome Back ${username}!`}</H2>
+            <Text>Almond Lima</Text>
           </CardItem>
           <CardItem style={{ justifyContent: 'center' }}>
             <Button onPress={this._signOutAsync}>
-              <Text>Sign me out :</Text>
+              <Text>Sign out</Text>
             </Button>
           </CardItem>
         </Card>
@@ -57,34 +60,21 @@ class UserScreen extends Component {
           <CardItem >
             <Content>
               <List>
-                <ListItem thumbnail>
-                  <Left>
-                    <Thumbnail square source={logo} />
-                  </Left>
-                  <Body style={{ flex: 1 }}>
-                    <Text>New PLace</Text>
-                    <Text note numberOfLines={1}> Why So Serious!!!!!!</Text>
-                  </Body>
-                  <Right>
-                    <Button transparent>
-                      <Text>View</Text>
-                    </Button>
-                  </Right>
-                </ListItem>
-                <ListItem thumbnail>
-                  <Left>
-                    <Thumbnail square source={logo} />
-                  </Left>
-                  <Body style={{ flex: 1 }}>
-                    <Text>New PLace</Text>
-                    <Text note numberOfLines={1}> Why So Serious!!!!!!</Text>
-                  </Body>
-                  <Right>
-                    <Button transparent>
-                      <Text>View</Text>
-                    </Button>
-                  </Right>
-                </ListItem>
+                {allEvents && allEvents.map(event => (
+                  <ListItem thumbnail key={event.id}>
+                    <Left>
+                      <Icon type="MaterialIcons" name="event-note" />
+                    </Left>
+                    <Body>
+                      <Text>{event.name}</Text>
+                      <Text note>{`${event.duration / 3600} hrs`}</Text>
+                      <Text note numberOfLines={1}>{event.description}</Text>
+                    </Body>
+                    <Right>
+                      <Button><Text>View</Text></Button>
+                    </Right>
+                  </ListItem>
+				))}
               </List>
             </Content>
           </CardItem>
@@ -95,7 +85,7 @@ class UserScreen extends Component {
               <Text>Team</Text>
             </CardItem>
             <CardItem >
-              <Text>Name: Almond-Lima</Text>
+              <H3>Almond-Lima</H3>
             </CardItem>
             <CardItem>
               <Left>
@@ -124,13 +114,15 @@ class UserScreen extends Component {
 
 const mapState = state => {
   return {
-    user: state.user
+	user: state.user,
+	events: state.event
   };
 };
 
 const mapDispatch = dispatch => {
   return {
-    logout: () => dispatch(logout())
+	logout: () => dispatch(logout()),
+	getEvents: () => dispatch(getEventsThunk())
   };
 };
 
