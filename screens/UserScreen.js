@@ -34,9 +34,12 @@ class UserScreen extends Component {
   }
 
   render() {
-	let { username } = this.props.user;
-	username = username[0].toUpperCase() + username.slice(1);
 	let { allEvents } = this.props.events;
+	let { username } = this.props.user;
+	if (username) {
+		username = username[0].toUpperCase() + username.slice(1);
+	}
+
     return (
       <Content>
         <Card>
