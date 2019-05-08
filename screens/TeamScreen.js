@@ -9,13 +9,13 @@ import {
 	Icon
 } from 'native-base';
 
-class TeamScreen extends Component {
+export default class TeamScreen extends Component {
 	render() {
 		return (
 			<Content>
 				<Card>
 					<CardItem>
-
+						<Text>ADDJSHDJSNDLKNSDkSND</Text>
 					</CardItem>
 				</Card>
 			</Content>

@@ -34,11 +34,12 @@ class UserScreen extends Component {
   }
 
   render() {
-	let { allEvents } = this.props.events;
-	let { username } = this.props.user;
-	if (username) {
-		username = username[0].toUpperCase() + username.slice(1);
-	}
+    let { allEvents } = this.props.events;
+    let { username } = this.props.user;
+    if (username) {
+      username = username[0].toUpperCase() + username.slice(1);
+    }
+    let { navigate } = this.props.navigation;
 
     return (
       <Content>
@@ -77,7 +78,7 @@ class UserScreen extends Component {
                       <Button><Text>View</Text></Button>
                     </Right>
                   </ListItem>
-				))}
+                ))}
               </List>
             </Content>
           </CardItem>
@@ -97,12 +98,15 @@ class UserScreen extends Component {
               </Left>
               <Right>
                 <Icon name='arrow-forward' />
+
               </Right>
             </CardItem>
-            <CardItem>
+            <CardItem >
               <Left>
                 <Icon type='FontAwesome' name='group' />
-                <Text>View Team-Mates!!!</Text>
+
+                <Text onPress={() => navigate('Teams')}>View Team-Mates!!!</Text>
+
               </Left>
               <Right>
                 <Icon name='arrow-forward' />
@@ -117,15 +121,15 @@ class UserScreen extends Component {
 
 const mapState = state => {
   return {
-	user: state.user,
-	events: state.event
+    user: state.user,
+    events: state.event
   };
 };
 
 const mapDispatch = dispatch => {
   return {
-	logout: () => dispatch(logout()),
-	getEvents: () => dispatch(getEventsThunk())
+    logout: () => dispatch(logout()),
+    getEvents: () => dispatch(getEventsThunk())
   };
 };
 
