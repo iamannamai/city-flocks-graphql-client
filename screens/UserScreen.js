@@ -15,18 +15,19 @@ import {
   Thumbnail,
   Left,
   Right,
-  Content
+  Content,
+  Container
 } from 'native-base';
 
 import { logout } from '../store';
+import { getEventsThunk, setSelectedEvent } from '../store/event';
+import SingleEventModal from '../components/SingleEventModal';
+
 const avatar = require('../assets/images/avataaars.png');
 
-import { getEventsThunk } from '../store/event';
-
 class UserScreen extends Component {
-  _signOutAsync = async () => {
-    await this.props.logout();
-    this.props.navigation.navigate('Auth');
+  state = {
+    isModalVisible: false
   }
 
   componentDidMount() {
@@ -34,14 +35,19 @@ class UserScreen extends Component {
   }
 
   render() {
-	let { allEvents } = this.props.events;
-	let { username } = this.props.user;
-	if (username) {
-		username = username[0].toUpperCase() + username.slice(1);
-	}
+    let { allEvents } = this.props.events;
+    let { username } = this.props.user;
+    if (username) {
+      username = username[0].toUpperCase() + username.slice(1);
+    }
 
     return (
+      <Container>
       <Content>
+        { this.state.isModalVisible && <SingleEventModal
+          isModalVisible={this.state.isModalVisible}
+          hideModal={this._hideModal}
+         /> }
         <Card>
           <CardItem style={{
             flexDirection: 'column'
@@ -74,10 +80,10 @@ class UserScreen extends Component {
                       <Text note numberOfLines={1}>{event.description}</Text>
                     </Body>
                     <Right>
-                      <Button><Text>View</Text></Button>
+                      <Button onPress={() => this._isModalVisible(event.id)}><Text>View</Text></Button>
                     </Right>
                   </ListItem>
-				))}
+				        ))}
               </List>
             </Content>
           </CardItem>
@@ -111,21 +117,38 @@ class UserScreen extends Component {
           </Card>
         </Content>
       </Content>
+      </Container>
     );
+  }
+
+  _signOutAsync = async () => {
+    await this.props.logout();
+    this.props.navigation.navigate('Auth');
+  }
+
+  _isModalVisible = eventId => {
+    console.log(eventId);
+    this.props.setSelectedEvent(eventId);
+    this.setState({ isModalVisible: true });
+  }
+
+  _hideModal = () => {
+    this.setState({ isModalVisible: false });
   }
 }
 
 const mapState = state => {
   return {
-	user: state.user,
-	events: state.event
+    user: state.user,
+    events: state.event
   };
 };
 
 const mapDispatch = dispatch => {
   return {
-	logout: () => dispatch(logout()),
-	getEvents: () => dispatch(getEventsThunk())
+    logout: () => dispatch(logout()),
+    getEvents: () => dispatch(getEventsThunk()),
+    setSelectedEvent: id => dispatch(setSelectedEvent(id))
   };
 };
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Container, Content, Tab, Tabs, Toast } from 'native-base';
-import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { Image, StyleSheet } from 'react-native';
 
 import { auth } from '../store/user';
 import AuthForm from '../components/AuthForm';
