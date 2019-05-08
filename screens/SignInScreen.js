@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import { Container, Content, Tab, Tabs, Toast } from 'native-base';
-import { Image, KeyboardAvoidingView, StyleSheet } from 'react-native';
+import { AsyncStorage, Image, StyleSheet } from 'react-native';
 
 import { auth } from '../store/user';
 import AuthForm from '../components/AuthForm';
@@ -20,9 +20,10 @@ class SignInScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.user !== this.props.user) {
-      if (this.props.user.username) {
+      const { user } = this.props
+      if (user.username) {
         this.props.navigation.navigate('Main');
-      } else if (this.props.user.error) {
+      } else if (user.error) {
         Toast.show({
           text: 'Invalid username or password',
           buttonText: 'Okay'
