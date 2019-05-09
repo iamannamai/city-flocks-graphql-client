@@ -4,38 +4,77 @@ import {
 	Content,
 	Card,
 	CardItem,
-	Body,
 	Text,
-	Icon,
 	H1,
 	Input,
 	Button,
-	List,
-	ListItem,
-	Left,
-	Thumbnail
+	List
 } from 'native-base';
-import TeamListItem from '../components/TeamListItem'
+import TeamListItem from '../components/TeamListItem';
+import { getTeamDataThunk, createTeamThunk } from '../store/team';
+import { me } from '../store/user';
 
 class TeamScreen extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			teamNameInput: ''
+		};
+
+		this.handleInputChange = this.handleInputChange.bind(this);
+	}
+
+	componentDidMount() {
+		if (this.props.user.teamId) {
+			this.props.getTeamData(this.props.user.teamId);
+		}
+	}
+
+	componentDidUpdate(prevProps) {
+		if (prevProps.user.teamId !== this.props.user.teamId) {
+			this.props.getTeamData(this.props.user.teamId);
+		}
+	}
+
+	handleInputChange(e) {
+		this.setState({
+			teamNameInput: e.nativeEvent.text
+		});
+	}
+
+	async createTeam() {
+		await this.props.createTeam(this.state.teamNameInput);
+		this.props.getUserData();
+	}
+
 	render() {
+		const { user, team } = this.props;
 		return (
 			<Content>
 				<H1>
 					Team
 				</H1>
 				<Text>
-					{this.props.user.username}
+					{user.username}
 				</Text>
 				<Card>
-					<CardItem>
-						<Text>Almond Lima</Text>
-					</CardItem>
-					<CardItem>
-						<Text>Team Name:</Text>
-						<Input placeholder="team name" />
-						<Button><Text>Create Team</Text></Button>
-					</CardItem>
+					{
+						user.teamId ?
+						<CardItem>
+							<Text>{team.name}</Text>
+						</CardItem>
+						:
+						<CardItem>
+							<Text>Team Name:</Text>
+							<Input
+								placeholder="team name"
+								value={this.state.teamNameInput}
+								onChange={this.handleInputChange} />
+							<Button onPress={() => this.createTeam()}>
+								<Text>Create Team</Text>
+							</Button>
+						</CardItem>
+					}
 				</Card>
 
 				<Card>
@@ -68,7 +107,9 @@ class TeamScreen extends Component {
 						</Content>
 					</CardItem>
 				</Card>
-				<Button onPress={() => this.props.navigation.navigate('Main')}><Text>Back</Text></Button>
+				<Button onPress={() => this.props.navigation.navigate('Main')}>
+					<Text>Back</Text>
+				</Button>
 			</Content>
 		);
 	}
@@ -77,12 +118,17 @@ class TeamScreen extends Component {
 
 const mapStateToProps = state => {
 	return {
-		user: state.user
-	}
-}
+		user: state.user,
+		team: state.team.myTeam
+	};
+};
 
-// const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = dispatch => {
+	return {
+		getTeamData: (teamId) => dispatch(getTeamDataThunk(teamId)),
+		createTeam: (teamName) => dispatch(createTeamThunk(teamName)),
+		getUserData: () => dispatch(me())
+	};
+};
 
-// }
-
-export default connect(mapStateToProps, null)(TeamScreen)
+export default connect(mapStateToProps, mapDispatchToProps)(TeamScreen);
