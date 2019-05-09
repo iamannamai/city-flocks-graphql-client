@@ -11,7 +11,7 @@ import {
 } from "native-base";
 
 export const EventsListItem = props => {
-  const { event } = props;
+  const { event, handleOnPress } = props;
   return (
     <ListItem thumbnail>
       <Left>
@@ -25,7 +25,7 @@ export const EventsListItem = props => {
         </Text>
       </Body>
       <Right>
-        <Button>
+        <Button onPress={() => handleOnPress(event.id)}>
           <Text>View</Text>
         </Button>
       </Right>
