@@ -123,7 +123,7 @@ class SingleEventModal extends Component {
               <Text style={styles.eventMeta}>{`${this.props.event.duration / 60 / 60} hr`}</Text>
             </View>
             <View style={{ paddingVertical: 10 }}>
-              <Text>{this.props.event.description}</Text>
+              <Text note>{this.props.event.description}</Text>
             </View>
           </View>
         </Content>
@@ -157,6 +157,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'stretch',
     width: '80%',
-    marginLeft: '10%'
+    marginLeft: '10%',
+    marginTop: '15%'
   }
 });
