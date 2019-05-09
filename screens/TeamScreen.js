@@ -8,11 +8,16 @@ import {
 	H1,
 	H2,
 	Input,
+	Item,
 	Button,
 	List
 } from 'native-base';
 import TeamListItem from '../components/TeamListItem';
-import { getTeamDataThunk, createTeamThunk } from '../store/team';
+import {
+	getTeamDataThunk,
+	createTeamThunk,
+	getAvailableUsersThunk
+} from '../store/team';
 import { me } from '../store/user';
 
 class TeamScreen extends Component {
@@ -28,12 +33,14 @@ class TeamScreen extends Component {
 	componentDidMount() {
 		if (this.props.user.teamId) {
 			this.props.getTeamData(this.props.user.teamId);
+			this.props.getAvailableUsers();
 		}
 	}
 
 	componentDidUpdate(prevProps) {
 		if (prevProps.user.teamId !== this.props.user.teamId) {
 			this.props.getTeamData(this.props.user.teamId);
+			this.props.getAvailableUsers();
 		}
 	}
 
@@ -49,7 +56,7 @@ class TeamScreen extends Component {
 	}
 
 	render() {
-		const { user, team } = this.props;
+		const { user, team, availableUsers } = this.props;
 		return (
 			<Content style={{marginTop: '20%'}}>
 				<H1 style={{textAlign: 'center', fontWeight: '900'}}>
@@ -65,15 +72,16 @@ class TeamScreen extends Component {
 							</Text>
 						</CardItem>
 						:
-						<CardItem>
+						<CardItem style={{flexDirection: 'column'}}>
 							<H2 style={{textAlign: 'center'}}>
 								Create New Team
 							</H2>
-							<Text>Team Name:</Text>
-							<Input
-								placeholder="team name"
-								value={this.state.teamNameInput}
-								onChange={this.handleInputChange} />
+							<Item regular>
+								<Input
+									placeholder="Enter team name"
+									value={this.state.teamNameInput}
+									onChange={this.handleInputChange} />
+							</Item>
 							<Button onPress={() => this.createTeam()}>
 								<Text>Create Team</Text>
 							</Button>
@@ -81,21 +89,26 @@ class TeamScreen extends Component {
 					}
 				</Card>
 
+				{ team.users &&
 				<Card>
 					<CardItem header bordered>
 						<Text>
-							My Teammates
+							My Team Members
 						</Text>
 					</CardItem>
 					<CardItem>
 						<Content>
 							<List>
-								<TeamListItem />
-								<TeamListItem />
+								{
+								team.users.map(teammate =>
+									<TeamListItem key={teammate.id} user={teammate} />)
+								}
 							</List>
 						</Content>
 					</CardItem>
-				</Card>
+				</Card>}
+
+				{availableUsers &&
 				<Card>
 					<CardItem header bordered>
 						<Text>
@@ -105,12 +118,19 @@ class TeamScreen extends Component {
 					<CardItem>
 						<Content>
 							<List>
-								<TeamListItem addToTeam={true} />
-								<TeamListItem addToTeam={true} />
+								{
+								availableUsers.map(player =>
+									(<TeamListItem
+										key={player.id}
+										addToTeam={true}
+										user={player} />))
+								}
 							</List>
 						</Content>
 					</CardItem>
 				</Card>
+				}
+
 				<Button onPress={() => this.props.navigation.navigate('Main')}>
 					<Text>Back</Text>
 				</Button>
@@ -123,7 +143,8 @@ class TeamScreen extends Component {
 const mapStateToProps = state => {
 	return {
 		user: state.user,
-		team: state.team.myTeam
+		team: state.team.myTeam,
+		availableUsers: state.team.potentialTeammates
 	};
 };
 
@@ -131,7 +152,8 @@ const mapDispatchToProps = dispatch => {
 	return {
 		getTeamData: (teamId) => dispatch(getTeamDataThunk(teamId)),
 		createTeam: (teamName) => dispatch(createTeamThunk(teamName)),
-		getUserData: () => dispatch(me())
+		getUserData: () => dispatch(me()),
+		getAvailableUsers: () => dispatch(getAvailableUsersThunk())
 	};
 };
 

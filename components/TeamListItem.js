@@ -17,7 +17,7 @@ export default function TeamListItem(props) {
             </Left>
             <Body>
                 <Text>
-                    Danny
+                    {props.user.username}
 		        </Text>
             </Body>
             {props.addToTeam ? (
