@@ -6,6 +6,7 @@ import {
 	CardItem,
 	Text,
 	H1,
+	H2,
 	Input,
 	Button,
 	List
@@ -50,21 +51,24 @@ class TeamScreen extends Component {
 	render() {
 		const { user, team } = this.props;
 		return (
-			<Content>
-				<H1>
+			<Content style={{marginTop: '20%'}}>
+				<H1 style={{textAlign: 'center', fontWeight: '900'}}>
 					Team
 				</H1>
-				<Text>
-					{user.username}
-				</Text>
 				<Card>
 					{
 						user.teamId ?
-						<CardItem>
-							<Text>{team.name}</Text>
+						<CardItem style={{flexDirection: 'column'}}>
+							<H2>{team.name}</H2>
+							<Text>
+								{user.username}
+							</Text>
 						</CardItem>
 						:
 						<CardItem>
+							<H2 style={{textAlign: 'center'}}>
+								Create New Team
+							</H2>
 							<Text>Team Name:</Text>
 							<Input
 								placeholder="team name"
