@@ -48,7 +48,8 @@ class EventsScreen extends Component {
                     <EventsListItem
                       key={event.id}
                       event={event}
-                      handleOnPress={this._showModal} />
+                      handleOnPress={this._showModal}
+                      buttonText="Join" />
                   ))}
               </List>
             </Content>
