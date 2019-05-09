@@ -16,7 +16,8 @@ import TeamListItem from '../components/TeamListItem';
 import {
 	getTeamDataThunk,
 	createTeamThunk,
-	getAvailableUsersThunk
+	getAvailableUsersThunk,
+	addUserToTeamThunk
 } from '../store/team';
 import { me } from '../store/user';
 
@@ -38,7 +39,9 @@ class TeamScreen extends Component {
 	}
 
 	componentDidUpdate(prevProps) {
-		if (prevProps.user.teamId !== this.props.user.teamId) {
+		let userChangedTeam = prevProps.user.teamId !== this.props.user.teamId;
+		let teamDataChanged = prevProps.team.users !== this.props.team.users;
+		if (userChangedTeam || teamDataChanged) {
 			this.props.getTeamData(this.props.user.teamId);
 			this.props.getAvailableUsers();
 		}
@@ -108,11 +111,11 @@ class TeamScreen extends Component {
 					</CardItem>
 				</Card>}
 
-				{availableUsers &&
+				{availableUsers.length > 0 &&
 				<Card>
 					<CardItem header bordered>
 						<Text>
-							Search for Player
+							Add a Player
 						</Text>
 					</CardItem>
 					<CardItem>
@@ -122,7 +125,7 @@ class TeamScreen extends Component {
 								availableUsers.map(player =>
 									(<TeamListItem
 										key={player.id}
-										addToTeam={true}
+										addToTeam={() => this.props.addUser(user.teamId, player.id)}
 										user={player} />))
 								}
 							</List>
@@ -153,7 +156,8 @@ const mapDispatchToProps = dispatch => {
 		getTeamData: (teamId) => dispatch(getTeamDataThunk(teamId)),
 		createTeam: (teamName) => dispatch(createTeamThunk(teamName)),
 		getUserData: () => dispatch(me()),
-		getAvailableUsers: () => dispatch(getAvailableUsersThunk())
+		getAvailableUsers: () => dispatch(getAvailableUsersThunk()),
+		addUser: (teamId, userId) => dispatch(addUserToTeamThunk(teamId, userId))
 	};
 };
 

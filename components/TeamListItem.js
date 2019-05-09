@@ -22,7 +22,7 @@ export default function TeamListItem(props) {
             </Body>
             {props.addToTeam ? (
                 <Right>
-                    <Button>
+                    <Button onPress={props.addToTeam}>
                         <Text>
                             Add
                          </Text>

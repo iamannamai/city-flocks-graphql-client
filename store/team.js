@@ -54,6 +54,15 @@ export const getAvailableUsersThunk = () => async dispatch => {
 	}
 };
 
+export const addUserToTeamThunk = (teamId, userId) => async dispatch => {
+	try {
+		const { data: team } = await axios.post(`${BASE_URL}/api/teams/${teamId}/addUser`, {userId});
+		getTeamDataThunk(teamId);
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 /**
  * REDUCER
  */
