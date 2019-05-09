@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { TouchableOpacity } from 'react-native';
 import {
   Button,
   Card,
   CardItem,
-  Body,
   Text,
   Icon,
   H2,
   H3,
   List,
-  ListItem,
   Thumbnail,
   Left,
   Right,
@@ -22,6 +21,7 @@ import { logout } from '../store';
 const avatar = require('../assets/images/avataaars.png');
 
 import { getEventsThunk } from '../store/event';
+import EventsListItem from '../components/EventsListItem';
 
 class UserScreen extends Component {
   _signOutAsync = async () => {
@@ -63,24 +63,21 @@ class UserScreen extends Component {
           <CardItem >
             <Content>
               <List>
-                {allEvents && allEvents.map(event => (
-                  <ListItem thumbnail key={event.id}>
-                    <Left>
-                      <Icon type="MaterialIcons" name="event-note" />
-                    </Left>
-                    <Body>
-                      <Text>{event.name}</Text>
-                      <Text note>{`${event.duration / 3600} hrs`}</Text>
-                      <Text note numberOfLines={1}>{event.description}</Text>
-                    </Body>
-                    <Right>
-                      <Button><Text>View</Text></Button>
-                    </Right>
-                  </ListItem>
-				))}
+                {allEvents && allEvents.map(event => (<EventsListItem key={event.id} event={event} />))}
               </List>
             </Content>
           </CardItem>
+            <TouchableOpacity onPress={()=> this.props.navigation.navigate("Events")}>
+          <CardItem thumbnail>
+              <Left>
+                <Icon type='Entypo' name='open-book' />
+                <Text>View More!!!</Text>
+              </Left>
+              <Right>
+                <Icon name='arrow-forward' />
+              </Right>
+            </CardItem>
+            </TouchableOpacity>
         </Card>
         <Content>
           <Card>
