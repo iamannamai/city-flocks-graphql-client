@@ -5,18 +5,22 @@ import { BASE_URL } from '../constants/constants';
  * ACTION TYPES
  */
 const SET_EVENTS = 'SET_EVENTS';
+const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
 
 /**
  * INITIAL STATE
  */
 const defaultState = {
-	allEvents: []
+	allEvents: [],
+	selectedEventId: 0
 };
 
 /**
  * ACTION CREATORS
  */
 const setEvents = events => ({ type: SET_EVENTS, events });
+
+export const setSelectedEvent = eventId => ({ type: SET_SELECTED_EVENT, eventId });
 
 /**
  * THUNK CREATORS
@@ -37,6 +41,8 @@ export default function(state = defaultState, action) {
 	switch (action.type) {
 		case SET_EVENTS:
 			return {...state, allEvents: action.events};
+		case SET_SELECTED_EVENT:
+			return {...state, selectedEventId: action.eventId};
 		default:
 			return state;
 	}

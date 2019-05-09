@@ -6,6 +6,7 @@ import AuthNavigator from '../screens/SignInScreen';
 //import MainTabNavigator from './MainTabNavigator';
 import UserScreen from '../screens/UserScreen';
 import TeamScreen from '../screens/TeamScreen';
+import EventsScreen from '../screens/EventsScreen';
 
 export default createAppContainer(
   createSwitchNavigator(
@@ -15,7 +16,8 @@ export default createAppContainer(
       AuthLoading: AuthLoadingScreen,
       Auth: AuthNavigator,
       Main: UserScreen,
-      Teams: TeamScreen
+      Teams: TeamScreen,
+      Events: EventsScreen
     },
     {
       initialRouteName: "AuthLoading"
