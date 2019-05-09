@@ -127,7 +127,6 @@ class UserScreen extends Component {
   }
 
   _isModalVisible = eventId => {
-    console.log(eventId);
     this.props.setSelectedEvent(eventId);
     this.setState({ isModalVisible: true });
   }
