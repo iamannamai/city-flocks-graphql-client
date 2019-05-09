@@ -6,6 +6,7 @@ import { BASE_URL } from '../constants/constants';
  */
 const SET_GAME = 'SET_GAME';
 const COMPLETE_TASK = 'COMPLETE_TASK';
+const END_GAME = 'END_GAME';
 
 /**
  * INITIAL STATE
@@ -20,7 +21,9 @@ const defaultState = {
  * ACTION CREATORS
  */
 const setGame = game => ({ type: SET_GAME, game });
+const setTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
+const endGame = () => ({ type: END_GAME });
 
 /**
  * THUNK CREATORS
@@ -41,6 +44,15 @@ export const getCurrentGame = () => async dispatch => {
 //     console.error(error);
 //   }
 // };
+
+export const getGameTasks = eventId => async dispatch => {
+  try {
+    const { data: game } = await axios.get(`${BASE_URL}/api/events/${eventId}/tasks`);
+    dispatch(setTasks(game.tasks));
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export default (state = defaultState, action) => {
   switch (action.type) {
