@@ -46,7 +46,11 @@ class UserScreen extends Component {
 			<Container>
 				<Content>
 					{this.state.isModalVisible && (
-						<SingleEventModal isModalVisible={this.state.isModalVisible} hideModal={this._hideModal} />
+						<SingleEventModal
+							isModalVisible={this.state.isModalVisible}
+							hideModal={this._hideModal}
+							openMap={() => navigate('GameMap')}
+						/>
 					)}
 					<Card>
 						<CardItem
