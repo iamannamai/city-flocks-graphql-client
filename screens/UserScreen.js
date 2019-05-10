@@ -42,6 +42,7 @@ class UserScreen extends Component {
   render() {
     let { allEvents, myEvents } = this.props;
     let { username } = this.props.user;
+    let { navigate } = this.props.navigation;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
     }
@@ -91,9 +92,7 @@ class UserScreen extends Component {
                 </List>
               </Content>
             </CardItem>
-            <TouchableOpacity
-              onPress={() => this.props.navigation.navigate('Events')}
-            >
+            <TouchableOpacity onPress={() => navigate('Events')}>
               <CardItem thumbnail>
                 <Left>
                   <Icon type="Entypo" name="open-book" />
@@ -125,7 +124,7 @@ class UserScreen extends Component {
               <CardItem>
                 <Left>
                   <Icon type="FontAwesome" name="group" />
-                  <Text>View Team-Mates!!!</Text>
+                  <Text onPress={() => navigate('Teams')}>View Team-Mates!!!</Text>
                 </Left>
                 <Right>
                   <Icon name="arrow-forward" />

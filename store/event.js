@@ -58,14 +58,12 @@ export default function(state = defaultState, action) {
 	switch (action.type) {
 		case SET_EVENTS:
 			return {...state, allEvents: action.events};
-		case SET_MY_EVENTS: {
-			console.log(action.myEvents.map(event => event.eventId));
+		case SET_MY_EVENTS:
 			return {
 				...state,
 				myEvents: action.myEvents,
 				myEventIds: action.myEvents.map(event => event.eventId)
 			};
-		}
 		case SET_SELECTED_EVENT:
 			return {...state, selectedEventId: action.eventId};
 		default:

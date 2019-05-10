@@ -2,7 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { StyleSheet, View } from 'react-native';
 import { MapView } from 'expo';
-import { Body, Button, Container, H3, Header, Content, Footer, Right, Text } from 'native-base';
+import {
+  Body,
+  Button,
+  H3,
+  Header,
+  Content,
+  Right,
+  Text
+} from 'native-base';
 import Modal from 'react-native-modal';
 import axios from 'axios';
 
@@ -15,7 +23,7 @@ class SingleEventModal extends Component {
     centerLong: -74,
     latDelta: 0.02,
     longDelta: 0.02
-  }
+  };
 
   async componentDidMount() {
     const { geojson, lat, lon, boundingbox } = await this._getInitialRegion();
@@ -58,10 +66,12 @@ class SingleEventModal extends Component {
         ]
       }
      */
-    const {data: location} = await axios.get(`https://nominatim.openstreetmap.org/search.php?q=${area}&polygon_geojson=1&format=json`);
+    const { data: location } = await axios.get(
+      `https://nominatim.openstreetmap.org/search.php?q=${area}&polygon_geojson=1&format=json`
+    );
 
     return location[0];
-  }
+  };
 
   render() {
     return (
@@ -93,7 +103,7 @@ class SingleEventModal extends Component {
           contentContainerStyle={{
             backgroundColor: 'rgba(255,255,255,1)'
           }}
-          >
+        >
           <View>
             <MapView
               style={styles.mapView}
@@ -105,22 +115,24 @@ class SingleEventModal extends Component {
                 longitudeDelta: this.state.longDelta
               }}
               scrollEnabled={false}
-              >
-              { this.state.polygonCoordinates.length > 0 &&
+            >
+              {this.state.polygonCoordinates.length > 0 && (
                 <MapView.Polygon
                   coordinates={this.state.polygonCoordinates}
                   fillColor="rgba(255,0,0,0.20)"
                   strokeColor="rgba(255,0,0,0.80)"
-                  />
-              }
+                />
+              )}
             </MapView>
           </View>
-          <View style={{
-            paddingHorizontal: 5
-          }}>
+          <View
+            style={{
+              paddingHorizontal: 5
+            }}
+          >
             <View style={styles.eventDetails}>
               <Text style={styles.eventMeta}>{this.props.event.location}</Text>
-              <Text style={styles.eventMeta}>{`${this.props.event.duration / 60 / 60} hr`}</Text>
+              <Text style={styles.eventMeta}>{`${this.props.event.duration / 3600} hr`}</Text>
             </View>
             <View style={{ paddingVertical: 10 }}>
               <Text note>{this.props.event.description}</Text>
@@ -133,7 +145,9 @@ class SingleEventModal extends Component {
 }
 
 const mapState = state => ({
-  event: state.event.allEvents.filter(event => event.id === state.event.selectedEventId)[0]
+  event: state.event.allEvents.filter(
+    event => event.id === state.event.selectedEventId
+  )[0]
 });
 
 export default connect(mapState)(SingleEventModal);
