@@ -6,6 +6,7 @@ import AuthNavigator from '../screens/SignInScreen';
 import UserScreen from '../screens/UserScreen';
 import EventsScreen from '../screens/EventsScreen';
 import GameMapViewScreen from '../screens/GameMapViewScreen';
+import TeamScreen from '../screens/TeamScreen';
 
 export default createAppContainer(
 	createSwitchNavigator(
