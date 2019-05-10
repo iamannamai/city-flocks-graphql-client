@@ -45,16 +45,17 @@ const dummyDate = [
 class GameMapView extends Component {
 	render() {
 		let { navigate } = this.props.navigation;
+		let { event } = this.props;
 		return (
 			<Container>
 				<MapView
 					showsUserLocation={true}
 					style={{ flex: 1 }}
 					initialRegion={{
-						latitude: 40.71,
-						longitude: -74.008,
-						latitudeDelta: 0.02,
-						longitudeDelta: 0.009
+						latitude: event.latitude,
+						longitude: event.longitude,
+						latitudeDelta: event.latitudeDelta,
+						longitudeDelta: event.longitudeDelta
 					}}
 				>
 					{dummyDate.map((task) => (
