@@ -3,10 +3,10 @@ import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 import AuthLoadingScreen from '../screens/AuthLoadingScreen';
 import AuthNavigator from '../screens/SignInScreen';
-//import MainTabNavigator from './MainTabNavigator';
 import UserScreen from '../screens/UserScreen';
-import TeamScreen from '../screens/TeamScreen';
 import EventsScreen from '../screens/EventsScreen';
+import GameMapViewScreen from '../screens/GameMapViewScreen';
+import TeamScreen from '../screens/TeamScreen';
 
 export default createAppContainer(
   createSwitchNavigator(
@@ -17,7 +17,8 @@ export default createAppContainer(
       Auth: AuthNavigator,
       Main: UserScreen,
       Teams: TeamScreen,
-      Events: EventsScreen
+      Events: EventsScreen,
+      GameMap: GameMapViewScreen
     },
     {
       initialRouteName: 'AuthLoading'

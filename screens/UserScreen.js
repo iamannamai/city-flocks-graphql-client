@@ -3,19 +3,19 @@ import { connect } from 'react-redux';
 
 import { TouchableOpacity } from 'react-native';
 import {
-  Button,
-  Card,
-  CardItem,
-  Text,
-  Icon,
-  H2,
-  H3,
-  List,
-  Thumbnail,
-  Left,
-  Right,
-  Content,
-  Container
+	Button,
+	Card,
+	CardItem,
+	Text,
+	Icon,
+	H2,
+	H3,
+	List,
+	Thumbnail,
+	Left,
+	Right,
+	Content,
+	Container
 } from 'native-base';
 
 import { logout } from '../store';
@@ -26,9 +26,9 @@ import SingleEventModal from '../components/SingleEventModal';
 const avatar = require('../assets/images/avataaars.png');
 
 class UserScreen extends Component {
-  state = {
-    isModalVisible: false
-  };
+	state = {
+		isModalVisible: false
+	};
 
   componentDidMount() {
     this.props.getEvents();
@@ -132,24 +132,29 @@ class UserScreen extends Component {
               </CardItem>
             </Card>
           </Content>
+          <Card>
+						<Button onPress={() => navigate('GameMap')}>
+							<Text>Open Map</Text>
+						</Button>
+					</Card>
         </Content>
       </Container>
     );
   }
 
-  _signOutAsync = async () => {
-    await this.props.logout();
-    this.props.navigation.navigate('Auth');
-  };
+	_signOutAsync = async () => {
+		await this.props.logout();
+		this.props.navigation.navigate('Auth');
+	};
 
-  _showModal = eventId => {
-    this.props.setSelectedEvent(eventId);
-    this.setState({ isModalVisible: true });
-  };
+	_showModal = (eventId) => {
+		this.props.setSelectedEvent(eventId);
+		this.setState({ isModalVisible: true });
+	};
 
-  _hideModal = () => {
-    this.setState({ isModalVisible: false });
-  };
+	_hideModal = () => {
+		this.setState({ isModalVisible: false });
+	};
 }
 
 const mapState = state => {
@@ -169,7 +174,4 @@ const mapDispatch = dispatch => {
   };
 };
 
-export default connect(
-  mapState,
-  mapDispatch
-)(UserScreen);
+export default connect(mapState, mapDispatch)(UserScreen);

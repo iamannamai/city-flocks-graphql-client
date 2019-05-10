@@ -7,6 +7,7 @@ import { BASE_URL } from '../constants/constants';
 const SET_GAME = 'SET_GAME';
 const COMPLETE_TASK = 'COMPLETE_TASK';
 const END_GAME = 'END_GAME';
+const SET_TASKS = 'SET_TASKS';
 
 /**
  * INITIAL STATE
@@ -14,7 +15,7 @@ const END_GAME = 'END_GAME';
 const defaultState = {
   eventId: 0,
   tasks: [],
-  teammates: [],
+  teammates: []
 };
 
 /**
@@ -32,7 +33,9 @@ const endGame = () => ({ type: END_GAME });
 export const startGame = (eventId, teamId) => async dispatch => {
   try {
     // dispatch set eventId to the selectedEvent
-    const {data: game} = await axios.put(`${BASE_URL}/api/eventTeams/event/${eventId}/team/${teamId}/activate`);
+    const { data: game } = await axios.put(
+      `${BASE_URL}/api/eventTeams/event/${eventId}/team/${teamId}/activate`
+    );
     // send request to start game
     dispatch(setGameEvent);
   } catch (error) {
@@ -43,7 +46,9 @@ export const startGame = (eventId, teamId) => async dispatch => {
 // retrieve tasks & teammates
 export const getTasks = (eventId, teamId) => async dispatch => {
   try {
-    const {data: tasks} = await axios.get(`${BASE_URL}/api/eventTeam/event/${eventId}/team/${teamId}/tasks`);
+    const { data: tasks } = await axios.get(
+      `${BASE_URL}/api/eventTeam/event/${eventId}/team/${teamId}/tasks`
+    );
     dispatch(setTasks(tasks));
   } catch (error) {
     console.error(error);
@@ -53,7 +58,9 @@ export const getTasks = (eventId, teamId) => async dispatch => {
 // retrieve current game
 export const getCurrentGame = () => async dispatch => {
   try {
-    const { data: currentGame } = await axios.get(`${BASE_URL}/api/eventTeams/event/${eventId}/`);
+    const { data: currentGame } = await axios.get(
+      `${BASE_URL}/api/eventTeams/event/${eventId}/`
+    );
     dispatch(setGameEvent(currentGame.eventId || []));
   } catch (error) {
     console.error(error);
@@ -73,7 +80,9 @@ export const getGameTasks = eventId => async dispatch => {
 
 export const completeTask = (eventId, teamId, taskId) => async dispatch => {
   try {
-    const { data: completedTask } = await axios.post(`${BASE_URL}/api/eventTeamTasks/event/${eventId}/team/${teamId}/task/${taskId}`);
+    const { data: completedTask } = await axios.post(
+      `${BASE_URL}/api/eventTeamTasks/event/${eventId}/team/${teamId}/task/${taskId}`
+    );
     dispatch(setTaskComplete(completedTask.taskId));
   } catch (error) {
     console.error(error);
@@ -91,9 +100,14 @@ export default (state = defaultState, action) => {
     case COMPLETE_TASK:
       return {
         ...state,
-        tasks: this.state.tasks.map(task => (
+        tasks: this.state.tasks.map(task =>
           task.id === action.taskId ? { ...task, completed: true } : task
-        ))
+        )
+      };
+    case SET_TASKS:
+      return {
+        ...state,
+        tasks: action.tasks
       };
     default:
       return state;
