@@ -76,6 +76,15 @@ const TaskList = props => {
 							name="checkbox-marked-outline" />
 					</Right>
 				</ListItem>
+
+				<ListItem style={listItemStyle}>
+					<Text style={{textAlign: 'right'}}>
+						TOTAL POINTS:
+					</Text>
+					<Right style={taskScoreStyle}>
+						<Text>190 pts</Text>
+					</Right>
+				</ListItem>
 			</List>
 		</Container>
 	) : null;
