@@ -19,7 +19,7 @@ import {
 } from 'native-base';
 
 import { logout } from '../store';
-import { getEventsThunk, setSelectedEvent } from '../store/event';
+import { getEventsThunk, getMyEventsThunk, setSelectedEvent } from '../store/event';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 
@@ -32,14 +32,21 @@ class UserScreen extends Component {
 
   componentDidMount() {
     this.props.getEvents();
+    console.log('gettingEvents');
+    if (this.props.user.teamId) {
+      console.log('getting my events');
+      this.props.getMyEvents(this.props.user.teamId);
+    }
   }
 
   render() {
-    let { allEvents } = this.props.events;
+    let { allEvents, myEvents } = this.props;
     let { username } = this.props.user;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
     }
+
+    const events = allEvents.filter(event => myEvents.includes(event.id));
 
     return (
       <Container>
@@ -73,8 +80,8 @@ class UserScreen extends Component {
             <CardItem>
               <Content>
                 <List>
-                  {allEvents &&
-                    allEvents.map(event => (
+                  {events &&
+                    events.map(event => (
                       <EventsListItem
                         key={event.id}
                         event={event}
@@ -149,7 +156,8 @@ class UserScreen extends Component {
 const mapState = state => {
   return {
     user: state.user,
-    events: state.event
+    allEvents: state.event.allEvents,
+    myEvents: state.event.myEventIds
   };
 };
 
@@ -157,6 +165,7 @@ const mapDispatch = dispatch => {
   return {
     logout: () => dispatch(logout()),
     getEvents: () => dispatch(getEventsThunk()),
+    getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
     setSelectedEvent: id => dispatch(setSelectedEvent(id))
   };
 };
