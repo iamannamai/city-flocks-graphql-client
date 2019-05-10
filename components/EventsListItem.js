@@ -1,14 +1,5 @@
-import React, { Component } from "react";
-import { TouchableOpacity } from "react-native";
-import {
-  Button,
-  Body,
-  Text,
-  Icon,
-  ListItem,
-  Left,
-  Right,
-} from "native-base";
+import React from 'react';
+import { Button, Body, Text, Icon, ListItem, Left, Right } from 'native-base';
 
 export const EventsListItem = props => {
   const { event, handleOnPress } = props;

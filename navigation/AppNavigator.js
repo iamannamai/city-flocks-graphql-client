@@ -15,6 +15,7 @@ export default createAppContainer(
 			AuthLoading: AuthLoadingScreen,
 			Auth: AuthNavigator,
 			Main: UserScreen,
+			Teams: TeamScreen,
 			Events: EventsScreen,
 			GameMap: GameMapViewScreen
 		},

@@ -20,7 +20,7 @@ class SignInScreen extends React.Component {
 
   componentDidUpdate(prevProps) {
     if (prevProps.user !== this.props.user) {
-      const { user } = this.props
+      const { user } = this.props;
       if (user.username) {
         this.props.navigation.navigate('Main');
       } else if (user.error) {
@@ -33,12 +33,12 @@ class SignInScreen extends React.Component {
     }
   }
 
-  _loginAsync = (credentials) => {
+  _loginAsync = credentials => {
     this.props.login(credentials);
     this.setState({ isLoggingIn: true });
   };
 
-  _registerAsync = (credentials) => {
+  _registerAsync = credentials => {
     this.props.signup(credentials);
     this.setState({ isLoggingIn: true });
   };
@@ -47,30 +47,30 @@ class SignInScreen extends React.Component {
     return (
       <DismissKeyboard>
         {/* <KeyboardAvoidingView behavior="position" enabled> */}
-          <Container style={styles.container}>
-            <Content contentContainerStyle={styles.welcomeContainer}>
-              <Image
-                source={require('../assets/images/splash.png')}
-                style={styles.welcomeImage}
-              />
-              <Tabs>
-                <Tab heading="Login">
-                  <AuthForm
-                    buttonText="Login"
-                    handleSubmit={this._loginAsync}
-                    isLoggingIn={this.state.isLoggingIn}
-                  />
-                </Tab>
-                <Tab heading="Signup">
-                  <AuthForm
-                    buttonText="Signup"
-                    handleSubmit={this._registerAsync}
-                    isLoggingIn={this.state.isLoggingIn}
-                  />
-                </Tab>
-              </Tabs>
-            </Content>
-          </Container>
+        <Container style={styles.container}>
+          <Content contentContainerStyle={styles.welcomeContainer}>
+            <Image
+              source={require('../assets/images/splash.png')}
+              style={styles.welcomeImage}
+            />
+            <Tabs>
+              <Tab heading="Login">
+                <AuthForm
+                  buttonText="Login"
+                  handleSubmit={this._loginAsync}
+                  isLoggingIn={this.state.isLoggingIn}
+                />
+              </Tab>
+              <Tab heading="Signup">
+                <AuthForm
+                  buttonText="Signup"
+                  handleSubmit={this._registerAsync}
+                  isLoggingIn={this.state.isLoggingIn}
+                />
+              </Tab>
+            </Tabs>
+          </Content>
+        </Container>
         {/* </KeyboardAvoidingView> */}
       </DismissKeyboard>
     );

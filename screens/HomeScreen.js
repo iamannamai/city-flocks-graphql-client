@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import {
-  AsyncStorage,
   Button,
   Image,
   Platform,
@@ -9,16 +8,16 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
 import { WebBrowser } from 'expo';
 
 import { logout } from '../store';
-import { MonoText } from "../components/StyledText";
+import { MonoText } from '../components/StyledText';
 
 class HomeScreen extends React.Component {
   static navigationOptions = {
-    header: null,
+    header: null
   };
 
   _showMoreApp = () => {
@@ -33,7 +32,10 @@ class HomeScreen extends React.Component {
   render() {
     return (
       <View style={styles.container}>
-        <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.contentContainer}
+        >
           <View style={styles.welcomeContainer}>
             <Image
               source={
@@ -43,20 +45,26 @@ class HomeScreen extends React.Component {
               }
               style={styles.welcomeImage}
             />
-            <Text style={styles.getStartedText} >{`Welcome Back ${this.props.user.username}`}</Text>
+            <Text style={styles.getStartedText}>{`Welcome Back ${
+              this.props.user.username
+            }`}</Text>
           </View>
 
           <View>
-        <Button title="Sign me out :)" onPress={this._signOutAsync} />
-      </View>
+            <Button title="Sign me out :)" onPress={this._signOutAsync} />
+          </View>
 
           <View style={styles.getStartedContainer}>
             {this._maybeRenderDevelopmentModeWarning()}
 
             <Text style={styles.getStartedText}>Get started by opening</Text>
 
-            <View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-              <MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
+            <View
+              style={[styles.codeHighlightContainer, styles.homeScreenFilename]}
+            >
+              <MonoText style={styles.codeHighlightText}>
+                screens/HomeScreen.js
+              </MonoText>
             </View>
 
             <Text style={styles.getStartedText}>
@@ -65,17 +73,28 @@ class HomeScreen extends React.Component {
           </View>
 
           <View style={styles.helpContainer}>
-            <TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-              <Text style={styles.helpLinkText}>Help, it didn’t automatically reload!</Text>
+            <TouchableOpacity
+              onPress={this._handleHelpPress}
+              style={styles.helpLink}
+            >
+              <Text style={styles.helpLinkText}>
+                Help, it didn’t automatically reload!
+              </Text>
             </TouchableOpacity>
           </View>
         </ScrollView>
 
         <View style={styles.tabBarInfoContainer}>
-          <Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
+          <Text style={styles.tabBarInfoText}>
+            This is a tab bar. You can edit it in:
+          </Text>
 
-          <View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-            <MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
+          <View
+            style={[styles.codeHighlightContainer, styles.navigationFilename]}
+          >
+            <MonoText style={styles.codeHighlightText}>
+              navigation/MainTabNavigator.js
+            </MonoText>
           </View>
         </View>
       </View>
@@ -92,8 +111,8 @@ class HomeScreen extends React.Component {
 
       return (
         <Text style={styles.developmentModeText}>
-          Development mode is enabled, your app will be slower but you can use useful development
-          tools. {learnMoreButton}
+          Development mode is enabled, your app will be slower but you can use
+          useful development tools. {learnMoreButton}
         </Text>
       );
     } else {
@@ -106,7 +125,9 @@ class HomeScreen extends React.Component {
   }
 
   _handleLearnMorePress = () => {
-    WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
+    WebBrowser.openBrowserAsync(
+      'https://docs.expo.io/versions/latest/guides/development-mode'
+    );
   };
 
   _handleHelpPress = () => {
@@ -119,64 +140,67 @@ class HomeScreen extends React.Component {
 const mapState = state => {
   return {
     user: state.user
-  }
-}
+  };
+};
 
 const mapDispatch = dispatch => {
   return {
     logout: () => dispatch(logout())
-  }
-}
+  };
+};
 
-export default connect(mapState,mapDispatch)(HomeScreen)
+export default connect(
+  mapState,
+  mapDispatch
+)(HomeScreen);
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#fff'
   },
   developmentModeText: {
     marginBottom: 20,
     color: 'rgba(0,0,0,0.4)',
     fontSize: 14,
     lineHeight: 19,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   contentContainer: {
-    paddingTop: 30,
+    paddingTop: 30
   },
   welcomeContainer: {
     alignItems: 'center',
     marginTop: 10,
-    marginBottom: 20,
+    marginBottom: 20
   },
   welcomeImage: {
     width: 100,
     height: 80,
     resizeMode: 'contain',
     marginTop: 3,
-    marginLeft: -10,
+    marginLeft: -10
   },
   getStartedContainer: {
     alignItems: 'center',
-    marginHorizontal: 50,
+    marginHorizontal: 50
   },
   homeScreenFilename: {
-    marginVertical: 7,
+    marginVertical: 7
   },
   codeHighlightText: {
-    color: 'rgba(96,100,109, 0.8)',
+    color: 'rgba(96,100,109, 0.8)'
   },
   codeHighlightContainer: {
     backgroundColor: 'rgba(0,0,0,0.05)',
     borderRadius: 3,
-    paddingHorizontal: 4,
+    paddingHorizontal: 4
   },
   getStartedText: {
     fontSize: 17,
     color: 'rgba(96,100,109, 1)',
     lineHeight: 24,
-    textAlign: 'center',
+    textAlign: 'center'
   },
   tabBarInfoContainer: {
     position: 'absolute',
@@ -188,33 +212,33 @@ const styles = StyleSheet.create({
         shadowColor: 'black',
         shadowOffset: { height: -3 },
         shadowOpacity: 0.1,
-        shadowRadius: 3,
+        shadowRadius: 3
       },
       android: {
-        elevation: 20,
-      },
+        elevation: 20
+      }
     }),
     alignItems: 'center',
     backgroundColor: '#fbfbfb',
-    paddingVertical: 20,
+    paddingVertical: 20
   },
   tabBarInfoText: {
     fontSize: 17,
     color: 'rgba(96,100,109, 1)',
-    textAlign: 'center',
+    textAlign: 'center'
   },
   navigationFilename: {
-    marginTop: 5,
+    marginTop: 5
   },
   helpContainer: {
     marginTop: 15,
-    alignItems: 'center',
+    alignItems: 'center'
   },
   helpLink: {
-    paddingVertical: 15,
+    paddingVertical: 15
   },
   helpLinkText: {
     fontSize: 14,
-    color: '#2e78b7',
-  },
+    color: '#2e78b7'
+  }
 });
