@@ -19,15 +19,14 @@ import Layout from '../constants/Layout';
 class SingleEventModal extends Component {
   state = {
     polygonCoordinates: [],
-    centerLat: 41,
-    centerLong: -74,
-    latDelta: 0.02,
-    longDelta: 0.02
+    centerLat: this.props.event.latitude,
+    centerLong: this.props.event.longitude,
+    latDelta: this.props.event.longitudeDelta,
+    longDelta: this.props.event.longitudeDelta
   };
 
   async componentDidMount() {
-    const { geojson, lat, lon, boundingbox } = await this._getInitialRegion();
-    const [latMin, latMax, longMin, longMax] = boundingbox;
+    const { geojson } = await this._getInitialRegion();
 
     const polygon = geojson.coordinates[0].map(coord => ({
       latitude: coord[1],
@@ -36,10 +35,6 @@ class SingleEventModal extends Component {
 
     this.setState({
       polygonCoordinates: polygon,
-      centerLat: Number(lat),
-      centerLong: Number(lon),
-      latDelta: Number(latMax) - Number(latMin),
-      longDelta: Number(longMax) - Number(longMin)
     });
   }
 
