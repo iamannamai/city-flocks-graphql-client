@@ -17,7 +17,7 @@ export default createAppContainer(
       Events: EventsScreen
     },
     {
-      initialRouteName: "AuthLoading"
+      initialRouteName: 'AuthLoading'
     }
   )
 );
