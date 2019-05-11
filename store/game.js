@@ -6,6 +6,7 @@ import { BASE_URL } from '../constants/constants';
  */
 const SET_GAME = 'SET_GAME';
 const SET_TASKS = 'SET_TASKS';
+const SET_TEAM_TASKS = 'SET_TEAM_TASKS';
 const COMPLETE_TASK = 'COMPLETE_TASK';
 const END_GAME = 'END_GAME';
 
@@ -16,6 +17,7 @@ const defaultState = {
   eventId: 0,
   eventTeamId: 0,
   tasks: [],
+  teamTasks: [],
   teammates: [],
   endTime: Date.now()
 };
@@ -24,7 +26,8 @@ const defaultState = {
  * ACTION CREATORS
  */
 const setGameEvent = game => ({ type: SET_GAME, game });
-const setTasks = tasks => ({ type: SET_TASKS, tasks });
+const setGameTasks = tasks => ({ type: SET_TASKS, tasks });
+const setTeamTasks = tasks => ({ type: SET_TEAM_TASKS, tasks});
 const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
 const setEndGame = () => ({ type: END_GAME });
 
@@ -52,11 +55,20 @@ export const endGameThunk = eventTeamId => async dispatch => {
   }
 };
 
-// retrieve tasks & teammates
-export const getTasksThunk = eventTeamId => async dispatch => {
+export const getGameTasksThunk = eventId => async dispatch => {
   try {
-    const {data: eventTeam} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}/tasks`);
-    dispatch(setTasks(eventTeam.tasks));
+    const {data: eventTasks} = await axios.get(`${BASE_URL}/api/events/${eventId}/tasks`);
+    dispatch(setGameTasks(eventTasks.tasks));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+// retrieve tasks & teammates
+export const getTeamTasksThunk = eventTeamId => async dispatch => {
+  try {
+    const {data: teamTasks} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}/tasks`);
+    dispatch(setTeamTasks(teamTasks.tasks));
   } catch (error) {
     console.error(error);
   }
