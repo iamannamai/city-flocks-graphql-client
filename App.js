@@ -25,9 +25,7 @@ export default class App extends React.Component {
       );
     } else if (!this.state.isLoadingComplete && !this.props.skipLoadingScreen) {
       return (
-        <View
-          style={styles.splashContainer}
-        >
+        <View style={styles.splashContainer}>
           <Image
             source={require('./assets/images/splash.png')}
             onLoad={this._loadResourcesAsync}
