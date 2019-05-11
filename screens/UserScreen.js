@@ -46,7 +46,7 @@ class UserScreen extends Component {
 
   render() {
     let { allEvents, myEventIds } = this.props;
-    let { username } = this.props.user;
+    let { username,team } = this.props.user;
     let { navigate } = this.props.navigation;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
@@ -72,7 +72,7 @@ class UserScreen extends Component {
             >
               <Thumbnail source={avatar} />
               <H2>{`Welcome Back ${username}!`}</H2>
-              <Text>Almond Lima</Text>
+              <Text>{team && team.name}</Text>
             </CardItem>
             <CardItem style={{ justifyContent: 'center' }}>
               <Button onPress={this._signOutAsync}>

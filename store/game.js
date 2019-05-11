@@ -13,14 +13,16 @@ const END_GAME = 'END_GAME';
 /**
  * INITIAL STATE
  */
-const defaultState = {
-  eventId: 0,
-  eventTeamId: 0,
-  tasks: [],
-  teamTasks: [],
-  teammates: [],
-  endTime: Date.now()
-};
+
+// const defaultState = {
+//   eventId: 0,
+//   eventTeamId: 0,
+//   tasks: [],
+//   teamTasks: [],
+//   teammates: [],
+//   endTime: Date.now()
+// };
+import { defaultGame } from './defaultState';
 
 /**
  * ACTION CREATORS
@@ -93,7 +95,7 @@ export const completeTaskThunk = (eventTeamId, taskId) => async dispatch => {
   }
 };
 
-export default (state = defaultState, action) => {
+export default (state = defaultGame, action) => {
   switch (action.type) {
     case SET_GAME:
       return {

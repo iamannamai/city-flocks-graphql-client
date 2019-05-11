@@ -12,14 +12,16 @@ const JOIN_EVENT = 'JOIN_EVENT';
 /**
  * INITIAL STATE
  */
-const defaultState = {
-  allEvents: [],
-  // stores array of event_team objects relevant to my team
-  myEvents: [],
-  // stores array of just eventIds from myEvents
-  myEventIds: [],
-  selectedEventId: 0
-};
+
+// const defaultState = {
+//   allEvents: [],
+//   // stores array of event_team objects relevant to my team
+//   myEvents: [],
+//   // stores array of just eventIds from myEvents
+//   myEventIds: [],
+//   selectedEventId: 0
+// };
+import { defaultEvent } from './defaultState';
 
 /**
  * ACTION CREATORS
@@ -73,7 +75,7 @@ export const joinEventThunk = (eventId, teamId) => async dispatch => {
 /**
  * REDUCER
  */
-export default function(state = defaultState, action) {
+export default function(state = defaultEvent, action) {
   switch (action.type) {
     case SET_EVENTS:
       return { ...state, allEvents: action.events };

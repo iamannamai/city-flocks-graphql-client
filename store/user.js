@@ -6,17 +6,21 @@ import { BASE_URL } from '../constants/constants';
  */
 const GET_USER = 'GET_USER';
 const REMOVE_USER = 'REMOVE_USER';
+const RESET_APP = 'RESET_APP';
 
 /**
  * INITIAL STATE
  */
-const defaultUser = {};
+
+// const defaultUser = {};
+import { defaultUser } from './defaultState';
 
 /**
  * ACTION CREATORS
  */
 const getUser = user => ({ type: GET_USER, user });
-const removeUser = () => ({ type: REMOVE_USER });
+// const removeUser = () => ({ type: REMOVE_USER });
+const resetApp = () => ({type: RESET_APP});
 
 /**
  * THUNK CREATORS
@@ -48,7 +52,7 @@ export const auth = (credentials, method) => async dispatch => {
 export const logout = () => async dispatch => {
   try {
     await axios.post(`${BASE_URL}/auth/logout`);
-    dispatch(removeUser());
+    dispatch(resetApp());
   } catch (err) {
     console.error(err);
   }
