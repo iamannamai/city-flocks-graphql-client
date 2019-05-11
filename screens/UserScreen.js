@@ -126,11 +126,6 @@ class UserScreen extends Component {
 							</CardItem>
 						</Card>
 					</Content>
-					<Card>
-						<Button onPress={() => navigate('GameMap')}>
-							<Text>open Map</Text>
-						</Button>
-					</Card>
 				</Content>
 			</Container>
 		);
