@@ -1,19 +1,18 @@
-import { TaskManager } from 'expo';
+import { TaskManager, Location } from 'expo';
 import { Alert } from 'react-native';
 import store from '../store';
 
 TaskManager.defineTask('geofence', ({data, error}) => {
   if (error) return;
-  console.log(data);
 
   const { eventType } = data;
   if (eventType === Location.GeofencingEventType.Enter) {
 
-    let state = store.getState();
+    let tasks = store.getState().game.tasks;
 
     Alert.alert(
       `You found it!`,
-      `Entered ${state.game.tasks.filter(task => task.id === data.region.identifier)[0].name}`,
+      `Entered ${tasks.filter(task => task.id === Number(data.region.identifier))[0].name}`,
       [{
         text: 'Cancel',
         onPress: () => console.log('Cancel Pressed'),

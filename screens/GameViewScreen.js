@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import { MapView, Location } from 'expo';
-import { Container, Button, Text, Icon } from 'native-base';
+import { MapView, Location, Permissions } from 'expo';
+import { Container, Button, Text, Icon, Fab } from 'native-base';
 import { connect } from 'react-redux';
 import { getTeamTasksThunk, getGameTasksThunk } from '../store';
 import BottomDrawer from '../components/BottomDrawer';
@@ -8,51 +8,55 @@ import TaskList from '../components/TaskList';
 
 class GameMapView extends Component {
   state = {
-    geofencesSet: false
+    geofencesSet: false,
+    hasLocationPermission: false
   }
 
-  componentDidMount() {
-    console.log("Mounting");
+  async componentDidMount() {
     if (this.props.eventTeamId) {
       this.props.getGameTasks(this.props.eventId);
       this.props.getTeamTasks(this.props.eventTeamId);
     }
+
+    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    if (status === 'granted') {
+      this.setState({ hasLocationPermission: true });
+    }
   }
 
-  // componentDidUpdate() {
-  //   console.log("How often is this happening");
-  //   if (this.props.allTasks.length > 0 && this.state.geofencesSet === false) {
-  //     console.log(this.props.allTasks);
-  //     Location.startGeofencingAsync(
-  //       'geofence',
-  //       this.props.allTasks.map(({id, latitude, longitude}) => {
-  //         console.log({
-  //           identifier: id,
-  //           latitude,
-  //           longitude,
-  //           radius: 15,  // in meters, increase this for a real event?
-  //         });
-  //         return {
-  //           identifier: id.toString(),
-  //           latitude,
-  //           longitude,
-  //           radius: 15,  // in meters, increase this for a real event?
-  //         };
-  //       })
-  //     );
+  async componentDidUpdate() {
+    if (this.props.allTasks.length > 0 && this.state.geofencesSet === false) {
+      Location.startGeofencingAsync(
+        'geofence',
+        this.props.allTasks.map(({id, latitude, longitude}) => {
+          return {
+            identifier: id.toString(),
+            latitude,
+            longitude,
+            radius: 20,  // in meters, increase this for a real event?
+          };
+        })
+      );
 
-  //     this.setState({geofencesSet: true});
-  //   }
-  // }
+      this.setState({geofencesSet: true});
+    }
+  }
 
   render() {
     let { navigate } = this.props.navigation;
     let { event, allTasks } = this.props;
     return (
       <Container>
+        {/* <Button
+          rounded
+          onPress={() => navigate('Main')}
+          style={{left: 30, top: 50}}
+          >
+          <Icon type="FontAwesome" name="user" style={{left: 30, top: 50}} />
+        </Button> */}
         {event && (
           <MapView
-            showsUserLocation={true}
+            showsUserLocation={this.state.hasLocationPermission}
             style={{ flex: 1 }}
             initialRegion={{
               latitude: event.latitude,
@@ -61,14 +65,6 @@ class GameMapView extends Component {
               longitudeDelta: event.longitudeDelta
             }}
           >
-            <Button
-                rounded
-                onPress={() => navigate('Main')}
-                style={{left: 30, top: 50}}
-                >
-                <Icon type="FontAwesome" name="user" style={{left: 30, top: 50}} />
-            </Button>
-
             {allTasks &&
               allTasks.map(task => (
                 <MapView.Marker

@@ -1,1 +1,1 @@
-export const BASE_URL = 'http://city-flocks-server.herokuapp.com';
+export const BASE_URL = 'https://114869af.ngrok.io' || 'http://city-flocks-server.herokuapp.com';
