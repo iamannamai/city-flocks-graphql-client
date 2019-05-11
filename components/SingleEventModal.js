@@ -7,34 +7,30 @@ import Modal from 'react-native-modal';
 import axios from 'axios';
 
 import Layout from '../constants/Layout';
-import { setSelectedEvent } from '../store/event';
 
 class SingleEventModal extends Component {
-	state = {
-		polygonCoordinates: [],
-		centerLat: 41,
-		centerLong: -74,
-		latDelta: 0.02,
-		longDelta: 0.02
-	};
+  state = {
+    polygonCoordinates: [],
+    centerLat: this.props.event.latitude,
+    centerLong: this.props.event.longitude,
+    latDelta: this.props.event.longitudeDelta,
+    longDelta: this.props.event.longitudeDelta
+  };
 
-	async componentDidMount() {
-		const { geojson, lat, lon, boundingbox } = await this._getInitialRegion();
-		const [ latMin, latMax, longMin, longMax ] = boundingbox;
+  async componentDidMount() {
+    const { geojson } = await this._getInitialRegion();
 
-		const polygon = geojson.coordinates[0].map((coord) => ({
-			latitude: coord[1],
-			longitude: coord[0]
-		}));
+    const polygon = geojson.type === 'Polygon'
+      ? geojson.coordinates[0].map((coord) => ({
+          latitude: coord[1],
+          longitude: coord[0]
+        }))
+      : [];
 
-		this.setState({
-			polygonCoordinates: polygon,
-			centerLat: Number(lat),
-			centerLong: Number(lon),
-			latDelta: Number(latMax) - Number(latMin),
-			longDelta: Number(longMax) - Number(longMin)
-		});
-	}
+    this.setState({
+      polygonCoordinates: polygon,
+    });
+  }
 
 	_getInitialRegion = async () => {
 		const area = this.props.event.location.replace(/\s/g, '+');
@@ -69,7 +65,6 @@ class SingleEventModal extends Component {
 	render() {
 		return (
 			<Modal
-				animationType="slide"
 				transparent={true}
 				backdropOpacity={0.3}
 				isVisible={this.props.isModalVisible}
@@ -87,7 +82,7 @@ class SingleEventModal extends Component {
 						<H3>{this.props.event.name}</H3>
 					</Body>
 					<Right>
-						<Button small onPress={this.props.openMap}>
+						<Button small onPress={this.props.handleOnPress}>
 							<Text>{this.props.buttonText || 'Start Game'}</Text>
 						</Button>
 					</Right>

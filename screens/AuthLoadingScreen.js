@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import { ActivityIndicator, StatusBar, View } from 'react-native';
 
-import { me } from '../store/user';
+import { me } from '../store';
 
 class AuthLoadingScreen extends React.Component {
   async componentDidMount() {
