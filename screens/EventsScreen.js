@@ -1,7 +1,18 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { Button, Card, CardItem, Header, H2, List, Content, Icon, Left, Body } from 'native-base';
+import {
+  Button,
+  Card,
+  CardItem,
+  Header,
+  H2,
+  List,
+  Content,
+  Icon,
+  Left,
+  Body
+} from 'native-base';
 
 import { getEventsThunk, setSelectedEvent } from '../store/event';
 import EventsListItem from '../components/EventsListItem';
@@ -49,7 +60,8 @@ class EventsScreen extends Component {
                       key={event.id}
                       event={event}
                       handleOnPress={this._showModal}
-                      buttonText="Join" />
+                      buttonText="Join"
+                    />
                   ))}
               </List>
             </Content>
