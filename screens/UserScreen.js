@@ -22,8 +22,6 @@ import { logout } from '../store';
 import { getEventsThunk, setSelectedEvent } from '../store/event';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
-import BottomDrawer from '../components/bottomDrawer';
-import TaskList from '../components/TaskList';
 
 const avatar = require('../assets/images/avataaars.png');
 
@@ -128,11 +126,6 @@ class UserScreen extends Component {
             </Card>
           </Content>
         </Content>
-
-		<BottomDrawer>
-			<TaskList event={allEvents[0]} />
-		</BottomDrawer>
-
       </Container>
     );
   }

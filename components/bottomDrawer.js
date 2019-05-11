@@ -1,5 +1,4 @@
 import React from 'react';
-import { Content, Text } from 'native-base';
 import Drawer from 'rn-bottom-drawer';
 
 const BottomDrawer = props => {
