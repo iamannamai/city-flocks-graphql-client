@@ -4,9 +4,9 @@ import Drawer from 'rn-bottom-drawer';
 const BottomDrawer = props => {
 	return (
 		<Drawer
-			containerHeight={400}
+			containerHeight={800}
 			offset={0}
-			downDisplay={300}
+			downDisplay={700}
 			startUp={false}
 			backgroundColor="#fff"
 		>

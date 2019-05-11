@@ -32,9 +32,10 @@ const headerStyle = {
 };
 
 const highlight = '#eb10b7';
+const gray = '#999';
 
 const TaskList = props => {
-	const { event } = props;
+	const { event, tasks } = props;
 	return event ? (
 		<Container>
 			<Header style={headerStyle}>
@@ -42,12 +43,28 @@ const TaskList = props => {
 				<Subtitle>Event: {event.name}</Subtitle>
 			</Header>
 			<List avatar>
+				{
+					tasks.map(task => (
+						<ListItem key={task.id} style={listItemStyle}>
+							<Text style={{width: 200}}>
+								{task.description}
+							</Text>
+							<Right style={taskScoreStyle}>
+								<Text note>{`${task.points} pts`}</Text>
+								<Icon
+									style={{color: gray}}
+									type="MaterialCommunityIcons"
+									name="checkbox-blank-outline" />
+							</Right>
+						</ListItem>
+					))
+				}
 				<ListItem style={listItemStyle}>
 					<Text>Here's an item to do</Text>
 					<Right style={taskScoreStyle}>
 						<Text note>50pts</Text>
 						<Icon
-							style={{color: '#999'}}
+							style={{color: gray}}
 							type="MaterialCommunityIcons"
 							name="checkbox-blank-outline" />
 					</Right>
