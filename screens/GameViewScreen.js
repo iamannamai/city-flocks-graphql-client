@@ -1,8 +1,10 @@
 import React, { Component } from 'react';
 import { MapView } from 'expo';
-import { Container, Button, Text } from 'native-base';
+import { Container, Button, Text, Icon } from 'native-base';
 import { connect } from 'react-redux';
 import { getTeamTasksThunk, getGameTasksThunk } from '../store';
+import BottomDrawer from '../components/BottomDrawer';
+import TaskList from '../components/TaskList';
 
 class GameMapView extends Component {
   componentDidMount() {
@@ -28,6 +30,14 @@ class GameMapView extends Component {
               longitudeDelta: event.longitudeDelta
             }}
           >
+            <Button
+                rounded
+                onPress={() => navigate('Main')}
+                style={{left: 30, top: 50}}
+                >
+                <Icon type="FontAwesome" name="user" style={{left: 30, top: 50}} />
+            </Button>
+
             {allTasks &&
               allTasks.map(task => (
                 <MapView.Marker
@@ -42,9 +52,9 @@ class GameMapView extends Component {
           </MapView>
         )}
 
-        <Button onPress={() => navigate('Main')}>
-          <Text>Go back</Text>
-        </Button>
+        <BottomDrawer>
+          <TaskList event={event} tasks={allTasks} />
+        </BottomDrawer>
       </Container>
     );
   }
