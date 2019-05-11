@@ -6,6 +6,7 @@ import { AppLoading, Asset, Font, Icon } from 'expo';
 import { Root } from 'native-base';
 
 import store from './store';
+import TaskManager from './taskManager';
 import AppNavigator from './navigation/AppNavigator';
 
 export default class App extends React.Component {

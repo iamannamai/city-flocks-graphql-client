@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { MapView } from 'expo';
+import { MapView, Location } from 'expo';
 import { Container, Button, Text, Icon } from 'native-base';
 import { connect } from 'react-redux';
 import { getTeamTasksThunk, getGameTasksThunk } from '../store';
@@ -7,12 +7,43 @@ import BottomDrawer from '../components/BottomDrawer';
 import TaskList from '../components/TaskList';
 
 class GameMapView extends Component {
+  state = {
+    geofencesSet: false
+  }
+
   componentDidMount() {
+    console.log("Mounting");
     if (this.props.eventTeamId) {
       this.props.getGameTasks(this.props.eventId);
       this.props.getTeamTasks(this.props.eventTeamId);
     }
   }
+
+  // componentDidUpdate() {
+  //   console.log("How often is this happening");
+  //   if (this.props.allTasks.length > 0 && this.state.geofencesSet === false) {
+  //     console.log(this.props.allTasks);
+  //     Location.startGeofencingAsync(
+  //       'geofence',
+  //       this.props.allTasks.map(({id, latitude, longitude}) => {
+  //         console.log({
+  //           identifier: id,
+  //           latitude,
+  //           longitude,
+  //           radius: 15,  // in meters, increase this for a real event?
+  //         });
+  //         return {
+  //           identifier: id.toString(),
+  //           latitude,
+  //           longitude,
+  //           radius: 15,  // in meters, increase this for a real event?
+  //         };
+  //       })
+  //     );
+
+  //     this.setState({geofencesSet: true});
+  //   }
+  // }
 
   render() {
     let { navigate } = this.props.navigation;
