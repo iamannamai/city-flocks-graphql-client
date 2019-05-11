@@ -2,18 +2,16 @@ import React, { Component } from 'react';
 import { MapView } from 'expo';
 import { Container, Button, Text } from 'native-base';
 import { connect } from 'react-redux';
-import { getGameTasks } from '../store/game';
+import { getTasksThunk } from '../store';
 
 class GameMapView extends Component {
   componentDidMount() {
-    if (this.props.event.id) {
-      this.props.getTasks(this.props.event.id);
+    if (this.props.eventTeamId) {
+      this.props.getTasks(this.props.eventTeamId);
     }
-    //this.props.getTasks(1);
   }
 
   render() {
-    console.log('inside render', this.props);
     let { navigate } = this.props.navigation;
     let { event, allTasks } = this.props;
     return (
@@ -56,13 +54,14 @@ const mapStateToProps = state => {
     allTasks: state.game.tasks,
     event: state.event.allEvents.filter(
       event => event.id === state.event.selectedEventId
-    )[0]
+    )[0],
+    eventTeamId: state.game.eventTeamId
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
-    getTasks: eventId => dispatch(getGameTasks(eventId))
+    getTasks: eventTeamId => dispatch(getTasksThunk(eventTeamId))
   };
 };
 

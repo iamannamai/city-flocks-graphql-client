@@ -13,7 +13,7 @@ import {
   Body,
   Toast
 } from 'native-base';
-import { getEventsThunk, joinEventThunk, setSelectedEvent } from '../store/event';
+import { getEventsThunk, joinEventThunk, setSelectedEvent } from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 

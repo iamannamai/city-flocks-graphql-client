@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { Container, Content, Tab, Tabs, Toast } from 'native-base';
 import { AsyncStorage, Image, StyleSheet } from 'react-native';
 
-import { auth } from '../store/user';
+import { auth } from '../store';
 import AuthForm from '../components/AuthForm';
 import DismissKeyboard from '../components/DismissKeyboard';
 import layout from '../constants/Layout';

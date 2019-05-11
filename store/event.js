@@ -50,7 +50,8 @@ export const getMyEventsThunk = teamId => async dispatch => {
     const { data: team } = await axios.get(
       `${BASE_URL}/api/teams/${teamId}/events`
     );
-    const { events } = team;
+		const { events } = team;
+		// the attribute event_team comes from the route response
     const myEvents = events.map(({ event_team }) => event_team);
     dispatch(setMyEvents(myEvents));
   } catch (error) {

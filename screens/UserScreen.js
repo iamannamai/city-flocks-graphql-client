@@ -20,8 +20,7 @@ import {
 	Container
 } from 'native-base';
 
-import { logout } from '../store';
-import { getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk } from '../store/event';
+import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk } from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 
@@ -39,15 +38,21 @@ class UserScreen extends Component {
     }
   }
 
+  componentDidUpdate(prevProps) {
+    if (this.props.eventTeamId && prevProps.eventTeamId !== this.props.eventTeamId) {
+      this._openMap();
+    }
+  }
+
   render() {
-    let { allEvents, myEvents } = this.props;
+    let { allEvents, myEventIds } = this.props;
     let { username } = this.props.user;
     let { navigate } = this.props.navigation;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
     }
 
-    const events = allEvents.filter(event => myEvents.includes(event.id));
+    const events = allEvents.filter(event => myEventIds.includes(event.id));
 
     return (
       <Container>
@@ -161,7 +166,15 @@ class UserScreen extends Component {
   };
 
   _startGame = () => {
-    this.props.startGame(this.state.eventTeamId);
+    const eventTeamId = this.props.myEvents
+      .filter(event => event.eventId === this.props.selectedEventId)[0]
+      .id;
+    this.props.startGame(eventTeamId);
+    if (this.props.eventTeamId) this._openMap();
+  }
+
+  _openMap = () => {
+    this.props.navigation.navigate('Game');
   }
 }
 
@@ -169,7 +182,10 @@ const mapState = state => {
   return {
     user: state.user,
     allEvents: state.event.allEvents,
-    myEvents: state.event.myEventIds
+    myEvents: state.event.myEvents,
+    myEventIds: state.event.myEventIds,
+    selectedEventId: state.event.selectedEventId,
+    eventTeamId: state.game.eventTeamId
   };
 };
 

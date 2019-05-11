@@ -23,7 +23,7 @@ const defaultState = {
 /**
  * ACTION CREATORS
  */
-const setGameEvent = eventId => ({ type: SET_GAME, eventId });
+const setGameEvent = game => ({ type: SET_GAME, game });
 const setTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
 const setEndGame = () => ({ type: END_GAME });
@@ -55,8 +55,8 @@ export const endGameThunk = eventTeamId => async dispatch => {
 // retrieve tasks & teammates
 export const getTasksThunk = eventTeamId => async dispatch => {
   try {
-    const {data: tasks} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}/tasks`);
-    dispatch(setTasks(tasks));
+    const {data: eventTeam} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}/tasks`);
+    dispatch(setTasks(eventTeam.tasks));
   } catch (error) {
     console.error(error);
   }
@@ -86,8 +86,9 @@ export default (state = defaultState, action) => {
     case SET_GAME:
       return {
         ...state,
-        data: action.game,
-        tasks: []
+        eventId: action.game.eventId,
+        eventTeamId: action.game.id,
+        endTime: action.game.endTime
       };
     case SET_TASKS:
       return {

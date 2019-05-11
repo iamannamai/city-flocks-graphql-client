@@ -19,9 +19,9 @@ import {
   getTeamDataThunk,
   createTeamThunk,
   getAvailableUsersThunk,
-  addUserToTeamThunk
-} from '../store/team';
-import { me } from '../store/user';
+  addUserToTeamThunk,
+  me
+} from '../store';
 
 class TeamScreen extends Component {
   constructor(props) {
