@@ -7,6 +7,7 @@ import { BASE_URL } from '../constants/constants';
 const SET_EVENTS = 'SET_EVENTS';
 const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
 const SET_MY_EVENTS = 'SET_MY_EVENTS';
+const JOIN_EVENT = 'JOIN_EVENT';
 
 /**
  * INITIAL STATE
@@ -25,6 +26,7 @@ const defaultState = {
  */
 const setEvents = events => ({ type: SET_EVENTS, events });
 const setMyEvents = myEvents => ({ type: SET_MY_EVENTS, myEvents });
+const joinEvent = event => ({ type: JOIN_EVENT, event });
 
 export const setSelectedEvent = eventId => ({
   type: SET_SELECTED_EVENT,
@@ -56,6 +58,17 @@ export const getMyEventsThunk = teamId => async dispatch => {
   }
 };
 
+export const joinEventThunk = (eventId, teamId) => async dispatch => {
+	try {
+		const {data: eventTeam} = await axios.post(`${BASE_URL}/api/eventTeams`, {
+			eventId, teamId
+		});
+		dispatch(joinEvent(eventTeam));
+	} catch (error) {
+		console.error(error);
+	}
+};
+
 /**
  * REDUCER
  */
@@ -70,7 +83,13 @@ export default function(state = defaultState, action) {
         myEventIds: action.myEvents.map(event => event.eventId)
       };
     case SET_SELECTED_EVENT:
-      return { ...state, selectedEventId: action.eventId };
+			return { ...state, selectedEventId: action.eventId };
+		case JOIN_EVENT:
+			return {
+				...state,
+				myEvents: [...state.myEvents, action.event],
+				myEventIds: [...state.myEventIds, action.event.eventId]
+			};
     default:
       return state;
   }

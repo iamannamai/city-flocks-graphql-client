@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-
 import {
   Button,
   Card,
@@ -11,10 +10,10 @@ import {
   Content,
   Icon,
   Left,
-  Body
+  Body,
+  Toast
 } from 'native-base';
-
-import { getEventsThunk, setSelectedEvent } from '../store/event';
+import { getEventsThunk, joinEventThunk, setSelectedEvent } from '../store/event';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 
@@ -35,6 +34,8 @@ class EventsScreen extends Component {
           <SingleEventModal
             isModalVisible={this.state.isModalVisible}
             hideModal={this._hideModal}
+            handleOnPress={() => this._handleJoinEvent(this.props.selectedEventId, this.props.teamId)}
+            buttonText="Join Event"
           />
         )}
         <Header style={{ marginVertical: 50 }}>
@@ -60,7 +61,6 @@ class EventsScreen extends Component {
                       key={event.id}
                       event={event}
                       handleOnPress={this._showModal}
-                      buttonText="Join"
                     />
                   ))}
               </List>
@@ -79,18 +79,32 @@ class EventsScreen extends Component {
   _hideModal = () => {
     this.setState({ isModalVisible: false });
   };
+
+  _handleJoinEvent = (eventId, teamId) => {
+    this.props.joinEvent(eventId, teamId);
+    this.setState({ isModalVisible: false});
+    const eventName = this.props.events.allEvents.filter(event => eventId === event.id)[0].name;
+    Toast.show({
+      text: `You just signed your team up for ${eventName}!`,
+      type: 'success',
+      duration: 2000
+    });
+  }
 }
 
 const mapState = state => {
   return {
-    events: state.event
+    events: state.event,
+    selectedEventId: state.event.selectedEventId,
+    teamId: state.user.teamId
   };
 };
 
 const mapDispatch = dispatch => {
   return {
     getEvents: () => dispatch(getEventsThunk()),
-    setSelectedEvent: id => dispatch(setSelectedEvent(id))
+    setSelectedEvent: id => dispatch(setSelectedEvent(id)),
+    joinEvent: (eventId, teamId) => dispatch(joinEventThunk(eventId, teamId))
   };
 };
 

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { TouchableOpacity } from 'react-native';
 import {
+  Body,
 	Button,
 	Card,
 	CardItem,
@@ -12,14 +13,15 @@ import {
 	H3,
 	List,
 	Thumbnail,
-	Left,
+  Left,
+  ListItem,
 	Right,
 	Content,
 	Container
 } from 'native-base';
 
 import { logout } from '../store';
-import { getEventsThunk, getMyEventsThunk, setSelectedEvent } from '../store/event';
+import { getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk } from '../store/event';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 
@@ -32,9 +34,7 @@ class UserScreen extends Component {
 
   componentDidMount() {
     this.props.getEvents();
-    console.log('gettingEvents');
     if (this.props.user.teamId) {
-      console.log('getting my events');
       this.props.getMyEvents(this.props.user.teamId);
     }
   }
@@ -56,6 +56,7 @@ class UserScreen extends Component {
             <SingleEventModal
               isModalVisible={this.state.isModalVisible}
               hideModal={this._hideModal}
+              handleOnPress={this._startGame}
             />
           )}
           <Card>
@@ -81,14 +82,22 @@ class UserScreen extends Component {
             <CardItem>
               <Content>
                 <List>
-                  {events &&
-                    events.map(event => (
+                  {events
+                    ? events.map(event => (
                       <EventsListItem
                         key={event.id}
                         event={event}
                         handleOnPress={this._showModal}
                         />
-                    ))}
+                    ))
+                    : (
+                      <ListItem>
+                        <Body>
+                          <Text note>Your team is not signed up for any events</Text>
+                        </Body>
+                      </ListItem>
+                    )
+                  }
                 </List>
               </Content>
             </CardItem>
@@ -132,11 +141,6 @@ class UserScreen extends Component {
               </CardItem>
             </Card>
           </Content>
-          <Card>
-						<Button onPress={() => navigate('GameMap')}>
-							<Text>Open Map</Text>
-						</Button>
-					</Card>
         </Content>
       </Container>
     );
@@ -154,7 +158,11 @@ class UserScreen extends Component {
 
 	_hideModal = () => {
 		this.setState({ isModalVisible: false });
-	};
+  };
+
+  _startGame = () => {
+    this.props.startGame(this.state.eventTeamId);
+  }
 }
 
 const mapState = state => {
@@ -170,7 +178,8 @@ const mapDispatch = dispatch => {
     logout: () => dispatch(logout()),
     getEvents: () => dispatch(getEventsThunk()),
     getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
-    setSelectedEvent: id => dispatch(setSelectedEvent(id))
+    setSelectedEvent: id => dispatch(setSelectedEvent(id)),
+    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId))
   };
 };
 

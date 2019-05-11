@@ -12,6 +12,8 @@ import {
   Button,
   List
 } from 'native-base';
+import _ from 'lodash';
+
 import TeamListItem from '../components/TeamListItem';
 import {
   getTeamDataThunk,
@@ -40,7 +42,7 @@ class TeamScreen extends Component {
 
   componentDidUpdate(prevProps) {
     let userChangedTeam = prevProps.user.teamId !== this.props.user.teamId;
-    let teamDataChanged = prevProps.team.users !== this.props.team.users;
+    let teamDataChanged = !_.isEqual(prevProps.team.users, this.props.team.users);
     if (userChangedTeam || teamDataChanged) {
       this.props.getTeamData(this.props.user.teamId);
       this.props.getAvailableUsers();

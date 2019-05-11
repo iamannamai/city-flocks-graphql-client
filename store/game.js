@@ -5,17 +5,19 @@ import { BASE_URL } from '../constants/constants';
  * ACTION TYPES
  */
 const SET_GAME = 'SET_GAME';
+const SET_TASKS = 'SET_TASKS';
 const COMPLETE_TASK = 'COMPLETE_TASK';
 const END_GAME = 'END_GAME';
-const SET_TASKS = 'SET_TASKS';
 
 /**
  * INITIAL STATE
  */
 const defaultState = {
   eventId: 0,
+  eventTeamId: 0,
   tasks: [],
-  teammates: []
+  teammates: [],
+  endTime: Date.now()
 };
 
 /**
@@ -24,31 +26,36 @@ const defaultState = {
 const setGameEvent = eventId => ({ type: SET_GAME, eventId });
 const setTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
-const endGame = () => ({ type: END_GAME });
+const setEndGame = () => ({ type: END_GAME });
 
 /**
  * THUNK CREATORS
  */
 
-export const startGame = (eventId, teamId) => async dispatch => {
+export const startGameThunk = eventTeamId => async dispatch => {
   try {
     // dispatch set eventId to the selectedEvent
-    const { data: game } = await axios.put(
-      `${BASE_URL}/api/eventTeams/event/${eventId}/team/${teamId}/activate`
-    );
+    const {data: game} = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/activate`);
     // send request to start game
-    dispatch(setGameEvent);
+    dispatch(setGameEvent(game));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
+export const endGameThunk = eventTeamId => async dispatch => {
+  try {
+    await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
+    dispatch(setEndGame());
   } catch (error) {
     console.error(error);
   }
 };
 
 // retrieve tasks & teammates
-export const getTasks = (eventId, teamId) => async dispatch => {
+export const getTasksThunk = eventTeamId => async dispatch => {
   try {
-    const { data: tasks } = await axios.get(
-      `${BASE_URL}/api/eventTeam/event/${eventId}/team/${teamId}/tasks`
-    );
+    const {data: tasks} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}/tasks`);
     dispatch(setTasks(tasks));
   } catch (error) {
     console.error(error);
@@ -56,33 +63,18 @@ export const getTasks = (eventId, teamId) => async dispatch => {
 };
 
 // retrieve current game
-export const getCurrentGame = () => async dispatch => {
+export const getCurrentGameThunk = eventTeamId => async dispatch => {
   try {
-    const { data: currentGame } = await axios.get(
-      `${BASE_URL}/api/eventTeams/event/${eventId}/`
-    );
+    const { data: currentGame } = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}/tasks`);
     dispatch(setGameEvent(currentGame.eventId || []));
   } catch (error) {
     console.error(error);
   }
 };
 
-export const getGameTasks = eventId => async dispatch => {
+export const completeTaskThunk = (eventTeamId, taskId) => async dispatch => {
   try {
-    const { data: game } = await axios.get(
-      `${BASE_URL}/api/events/${eventId}/tasks`
-    );
-    dispatch(setTasks(game.tasks));
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-export const completeTask = (eventId, teamId, taskId) => async dispatch => {
-  try {
-    const { data: completedTask } = await axios.post(
-      `${BASE_URL}/api/eventTeamTasks/event/${eventId}/team/${teamId}/task/${taskId}`
-    );
+    const { data: completedTask } = await axios.put(`${BASE_URL}/api/eventTeamTasks/${eventTeamId}/task/${taskId}`);
     dispatch(setTaskComplete(completedTask.taskId));
   } catch (error) {
     console.error(error);
@@ -97,18 +89,20 @@ export default (state = defaultState, action) => {
         data: action.game,
         tasks: []
       };
-    case COMPLETE_TASK:
-      return {
-        ...state,
-        tasks: this.state.tasks.map(task =>
-          task.id === action.taskId ? { ...task, completed: true } : task
-        )
-      };
     case SET_TASKS:
       return {
         ...state,
         tasks: action.tasks
       };
+    case COMPLETE_TASK:
+      return {
+        ...state,
+        tasks: this.state.tasks.map(task => (
+          task.id === action.taskId ? { ...task, completed: true } : task
+        ))
+      };
+    case END_GAME:
+      return defaultState;
     default:
       return state;
   }
