@@ -1,19 +1,19 @@
 import React, { Component } from 'react';
 import { MapView } from 'expo';
-import { Container, Button, Text } from 'native-base';
+import { Container, Button, Icon } from 'native-base';
 import { connect } from 'react-redux';
 import { getGameTasks } from '../store/game';
+import BottomDrawer from '../components/BottomDrawer';
+import TaskList from '../components/TaskList';
 
 class GameMapView extends Component {
 	componentDidMount() {
 		if (this.props.event.id) {
 			this.props.getTasks(this.props.event.id);
 		}
-		//this.props.getTasks(1);
 	}
 
 	render() {
-		console.log('inside render', this.props);
 		let { navigate } = this.props.navigation;
 		let { event, allTasks } = this.props;
 		return (
@@ -27,8 +27,16 @@ class GameMapView extends Component {
 							longitude: event.longitude,
 							latitudeDelta: event.latitudeDelta,
 							longitudeDelta: event.longitudeDelta
-						}}
-					>
+						}}>
+
+						<Button
+							rounded
+							onPress={() => navigate('Main')}
+							style={{left: 30, top: 50}}
+							>
+							<Icon type="FontAwesome" name="user" style={{left: 30, top: 50}} />
+						</Button>
+
 						{allTasks &&
 							allTasks.map((task) => (
 								<MapView.Marker
@@ -37,15 +45,16 @@ class GameMapView extends Component {
 										latitude: task.latitude,
 										longitude: task.longitude
 									}}
-									description={`${task.name}-${task.description}`}
+									title={task.name}
+									description={task.description}
 								/>
 							))}
 					</MapView>
 				)}
 
-				<Button onPress={() => navigate('Main')}>
-					<Text>Go back</Text>
-				</Button>
+				<BottomDrawer>
+					<TaskList event={event} tasks={allTasks} />
+				</BottomDrawer>
 			</Container>
 		);
 	}
