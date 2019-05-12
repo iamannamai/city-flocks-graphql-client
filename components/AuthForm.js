@@ -47,8 +47,7 @@ class AuthForm extends React.Component {
           disabled={this.props.isLoggingIn}
           onPress={() => this.props.handleSubmit(this.state)}
         >
-          <Text>{this.props.buttonText}</Text>
-          {this.props.isLoggingIn && <Spinner />}
+          {this.props.isLoggingIn ? <Spinner /> : <Text>{this.props.buttonText}</Text>}
         </Button>
       </Form>
     );

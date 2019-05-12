@@ -33,7 +33,7 @@ class GameMapView extends Component {
             identifier: id.toString(),
             latitude,
             longitude,
-            radius: 20,  // in meters, increase this for a real event?
+            radius: 25,  // in meters, increase this for a real event?
           };
         })
       );
@@ -47,17 +47,17 @@ class GameMapView extends Component {
     let { event, allTasks } = this.props;
     return (
       <Container>
-        {/* <Button
+        <Button
           rounded
           onPress={() => navigate('Main')}
-          style={{left: 30, top: 50}}
+          style={{left: 30, top: 50, zIndex: 2,position:"absolute"}}
           >
-          <Icon type="FontAwesome" name="user" style={{left: 30, top: 50}} />
-        </Button> */}
+          <Icon type="FontAwesome" name="user" />
+        </Button>
         {event && (
           <MapView
             showsUserLocation={this.state.hasLocationPermission}
-            style={{ flex: 1 }}
+            style={{ flex: 1, zIndex: 1 }}
             initialRegion={{
               latitude: event.latitude,
               longitude: event.longitude,

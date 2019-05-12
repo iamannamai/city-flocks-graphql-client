@@ -20,7 +20,7 @@ import {
 	Container
 } from 'native-base';
 
-import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk } from '../store';
+import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk, resumeGameThunk } from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 
@@ -28,7 +28,7 @@ const avatar = require('../assets/images/avataaars.png');
 
 class UserScreen extends Component {
 	state = {
-		isModalVisible: false
+    isModalVisible: false
 	};
 
   componentDidMount() {
@@ -80,6 +80,7 @@ class UserScreen extends Component {
               </Button>
             </CardItem>
           </Card>
+          
           <Card>
             <CardItem header bordered>
               <Text>Events</Text>
@@ -166,10 +167,11 @@ class UserScreen extends Component {
   };
 
   _startGame = () => {
-    const eventTeamId = this.props.myEvents
-      .filter(event => event.eventId === this.props.selectedEventId)[0]
-      .id;
-    this.props.startGame(eventTeamId);
+    const eventTeam = this.props.myEvents
+      .filter(event => event.eventId === this.props.selectedEventId)[0];
+    console.log(eventTeam);
+    if(eventTeam.status === 'ACTIVE')this.props.resumeGame(eventTeam.id);
+    else this.props.startGame(eventTeam.id);
     if (this.props.eventTeamId) this._openMap();
   }
 
@@ -185,7 +187,8 @@ const mapState = state => {
     myEvents: state.event.myEvents,
     myEventIds: state.event.myEventIds,
     selectedEventId: state.event.selectedEventId,
-    eventTeamId: state.game.eventTeamId
+    eventTeamId: state.game.eventTeamId,
+    activeEvent: state.game.activeEvent
   };
 };
 
@@ -195,7 +198,9 @@ const mapDispatch = dispatch => {
     getEvents: () => dispatch(getEventsThunk()),
     getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
     setSelectedEvent: id => dispatch(setSelectedEvent(id)),
-    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId))
+    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId)),
+    resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
+
   };
 };
 

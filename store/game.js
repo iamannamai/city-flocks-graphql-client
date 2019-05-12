@@ -48,6 +48,17 @@ export const startGameThunk = eventTeamId => async dispatch => {
   }
 };
 
+export const resumeGameThunk = eventTeamId => async dispatch => {
+  try {
+    // dispatch set eventId to the selectedEvent
+    const {data: game} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}`);
+    // send request to start game
+    dispatch(setGameEvent(game));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const endGameThunk = eventTeamId => async dispatch => {
   try {
     await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
