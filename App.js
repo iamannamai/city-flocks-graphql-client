@@ -7,6 +7,7 @@ import { Root } from 'native-base';
 
 import store from './store';
 import TaskManager from './taskManager';
+import socket from './socket';
 import AppNavigator from './navigation/AppNavigator';
 
 export default class App extends React.Component {
