@@ -36,7 +36,6 @@ const setEndGame = () => ({ type: END_GAME });
 /**
  * THUNK CREATORS
  */
-
 export const startGameThunk = eventTeamId => async dispatch => {
   try {
     // dispatch set eventId to the selectedEvent
@@ -59,9 +58,9 @@ export const resumeGameThunk = eventTeamId => async dispatch => {
   }
 };
 
-export const endGameThunk = eventTeamId => async dispatch => {
+export const endGameThunk = (eventTeamId) => async dispatch => {
   try {
-    await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
+    const { data: game } = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
     dispatch(setEndGame());
   } catch (error) {
     console.error(error);
@@ -81,7 +80,14 @@ export const getGameTasksThunk = eventId => async dispatch => {
 export const getTeamTasksThunk = eventTeamId => async dispatch => {
   try {
     const {data: teamTasks} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}/tasks`);
-    dispatch(setTeamTasks(teamTasks.tasks));
+    const tasks = teamTasks.tasks.map(task => (
+      {
+        ...task.event_team_task,
+        name: task.name,
+        points: task.points
+      }
+    ));
+    dispatch(setTeamTasks(tasks));
   } catch (error) {
     console.error(error);
   }
@@ -99,7 +105,11 @@ export const getCurrentGameThunk = eventTeamId => async dispatch => {
 
 export const completeTaskThunk = (eventTeamId, taskId) => async dispatch => {
   try {
-    const { data: completedTask } = await axios.put(`${BASE_URL}/api/eventTeamTasks/${eventTeamId}/task/${taskId}`);
+    const { data: completedTask } = await axios.put(`${BASE_URL}/api/eventTeamTasks`, {
+      eventTeamId,
+      taskId,
+      completed: true
+    });
     dispatch(setTaskComplete(completedTask.taskId));
   } catch (error) {
     console.error(error);
@@ -120,12 +130,21 @@ export default (state = defaultGame, action) => {
         ...state,
         tasks: action.tasks
       };
+    case SET_TEAM_TASKS:
+      return {
+        ...state,
+        teamTasks: action.tasks,
+        teamTasksRemaining: action.tasks.reduce((count, current) => {
+          return current.completed ? count : ++count;
+        }, 0)
+      };
     case COMPLETE_TASK:
       return {
         ...state,
-        tasks: this.state.tasks.map(task => (
+        teamTasks: state.teamTasks.map(task => (
           task.id === action.taskId ? { ...task, completed: true } : task
-        ))
+        )),
+        teamTasksRemaining: state.teamTasksRemaining - 1
       };
     case END_GAME:
       return defaultState;

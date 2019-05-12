@@ -12,6 +12,7 @@ export const defaultGame = {
   eventTeamId: 0,
   tasks: [],
   teamTasks: [],
+  teamTasksRemaining: 9999,
   teammates: [],
   endTime: Date.now()
 };
