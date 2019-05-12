@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { MapView, Location, Permissions } from 'expo';
-import { Container, Button, Text, Icon, Fab } from 'native-base';
+import { Alert } from 'react-native';
+import { Container, Button, Text, Icon } from 'native-base';
 import { connect } from 'react-redux';
-import { getTeamTasksThunk, getGameTasksThunk } from '../store';
+import { getTeamTasksThunk, getGameTasksThunk, endGameThunk } from '../store';
+import { GEOFENCE_TASKNAME } from '../taskManager';
 import BottomDrawer from '../components/BottomDrawer';
 import TaskList from '../components/TaskList';
 
 class GameMapView extends Component {
   state = {
     geofencesSet: false,
-    hasLocationPermission: false
+    hasLocationPermission: false,
+    gameOver: false
   }
 
   async componentDidMount() {
@@ -24,22 +27,31 @@ class GameMapView extends Component {
     }
   }
 
-  async componentDidUpdate() {
+  componentDidUpdate() {
     if (this.props.allTasks.length > 0 && this.state.geofencesSet === false) {
       Location.startGeofencingAsync(
-        'geofence',
+        GEOFENCE_TASKNAME,
         this.props.allTasks.map(({id, latitude, longitude}) => {
           return {
             identifier: id.toString(),
             latitude,
             longitude,
-            radius: 20,  // in meters, increase this for a real event?
+            radius: 30,  // in meters, increase this for a real event?
           };
         })
       );
 
       this.setState({geofencesSet: true});
     }
+    console.log("Tasks remaining, ", this.props.tasksRemaining);
+    if (!this.props.tasksRemaining && this.state.geofencesSet) {
+      console.log(this.props.tasksRemaining);
+      this.setState({ gameOver: true });
+    }
+  }
+
+  componentWillUnmount() {
+    Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
   }
 
   render() {
@@ -79,11 +91,32 @@ class GameMapView extends Component {
           </MapView>
         )}
 
+        {
+          this.state.gameOver &&
+            // some kind of alert or modal to navigate back to main screen
+            Alert.alert(
+              `Event Complete!`,
+              `You've completed all tasks in X time`,
+              [{
+                text: 'End Game',
+                onPress: this._completeGame,
+                style: 'cancel',
+              }],
+              { cancelable: true }
+            )
+        }
+
         <BottomDrawer>
           <TaskList event={event} tasks={allTasks} />
         </BottomDrawer>
       </Container>
     );
+  }
+
+  _endGame = () => {
+    Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
+    this.props.endGame(this.props.eventTeamId);
+    this.props.navigation.navigate('Main');
   }
 }
 
@@ -94,14 +127,16 @@ const mapStateToProps = state => {
       event => event.id === state.event.selectedEventId
     )[0],
     eventTeamId: state.game.eventTeamId,
-    eventId: state.game.eventId
+    eventId: state.game.eventId,
+    tasksRemaining: state.game.teamTasksRemaining
   };
 };
 
 const mapDispatchToProps = dispatch => {
   return {
     getTeamTasks: eventTeamId => dispatch(getTeamTasksThunk(eventTeamId)),
-    getGameTasks: eventId => dispatch(getGameTasksThunk(eventId))
+    getGameTasks: eventId => dispatch(getGameTasksThunk(eventId)),
+    endGame: eventTeamId => dispatch(endGameThunk(eventTeamId))
   };
 };
 
