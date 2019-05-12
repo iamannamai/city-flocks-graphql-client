@@ -28,7 +28,8 @@ const completedItemStyle = {
 
 const headerStyle = {
 	flexDirection: 'column',
-	alignItems: 'center'
+	alignItems: 'center',
+	zIndex: 2
 };
 
 const highlight = '#eb10b7';
@@ -42,7 +43,7 @@ const TaskList = props => {
 				<Title>Tasks</Title>
 				<Subtitle>Event: {event.name}</Subtitle>
 			</Header>
-			<List avatar>
+			<List avatar style={{zIndex: 2}}>
 				{
 					tasks.map(task => (
 						<ListItem key={task.id} style={listItemStyle}>

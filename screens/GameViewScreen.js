@@ -46,18 +46,18 @@ class GameMapView extends Component {
     let { navigate } = this.props.navigation;
     let { event, allTasks } = this.props;
     return (
-      <Container>
+      <Container style={{zIndex: 2}}>
         <Button
           rounded
           onPress={() => navigate('Main')}
-          style={{left: 30, top: 50, zIndex: 2,position:"absolute"}}
+          style={{left: 30, top: 50, zIndex: 1}}
           >
           <Icon type="FontAwesome" name="user" />
         </Button>
         {event && (
           <MapView
             showsUserLocation={this.state.hasLocationPermission}
-            style={{ flex: 1, zIndex: 1 }}
+            style={{ flex: 1 }}
             initialRegion={{
               latitude: event.latitude,
               longitude: event.longitude,
