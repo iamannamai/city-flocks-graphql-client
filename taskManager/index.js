@@ -30,12 +30,10 @@ TaskManager.defineTask(GEOFENCE_TASKNAME, ({data, error}) => {
 });
 
 const isCompleted = (teamTasks, taskId) => {
-  console.log()
   return teamTasks.find(task => task.taskId === taskId).completed;
 };
 
 const dispatchCompleteTask = (eventTeamId, taskId) => {
-  // console.log(`Completing task ${eventTeamId} ${taskId}`);
   store.dispatch(completeTaskThunk(eventTeamId, taskId));
 };
 

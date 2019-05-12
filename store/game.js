@@ -30,7 +30,7 @@ const setGameEvent = game => ({ type: SET_GAME, game });
 const setGameTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTeamTasks = tasks => ({ type: SET_TEAM_TASKS, tasks});
 const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
-const setEndGame = () => ({ type: COMPLETE_GAME });
+const setEndGame = () => ({ type: END_GAME });
 
 /**
  * THUNK CREATORS
@@ -123,14 +123,13 @@ export default (state = defaultState, action) => {
         ...state,
         teamTasks: action.tasks,
         teamTasksRemaining: action.tasks.reduce((count, current) => {
-          console.log(current);
           return current.completed ? count : ++count;
         }, 0)
       };
     case COMPLETE_TASK:
       return {
         ...state,
-        teamTasks: state.tasks.map(task => (
+        teamTasks: state.teamTasks.map(task => (
           task.id === action.taskId ? { ...task, completed: true } : task
         )),
         teamTasksRemaining: state.teamTasksRemaining - 1

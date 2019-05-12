@@ -22,36 +22,28 @@ class GameMapView extends Component {
     }
 
     const { status } = await Permissions.askAsync(Permissions.LOCATION);
-    if (status === 'granted') {
-      this.setState({ hasLocationPermission: true });
-    }
+    const hasLocationPermission = status === 'granted';
+
+    this.setState({
+      hasLocationPermission
+    });
   }
 
-  componentDidUpdate() {
+  componentDidUpdate(prevProps) {
     if (this.props.allTasks.length > 0 && this.state.geofencesSet === false) {
-      Location.startGeofencingAsync(
-        GEOFENCE_TASKNAME,
-        this.props.allTasks.map(({id, latitude, longitude}) => {
-          return {
-            identifier: id.toString(),
-            latitude,
-            longitude,
-            radius: 30,  // in meters, increase this for a real event?
-          };
-        })
-      );
-
-      this.setState({geofencesSet: true});
+      this._createGeofences();
+      this.setState({ geofencesSet: true });
     }
-    console.log("Tasks remaining, ", this.props.tasksRemaining);
-    if (!this.props.tasksRemaining && this.state.geofencesSet) {
-      console.log(this.props.tasksRemaining);
+
+    if (prevProps.tasksRemaining > 0 && this.props.tasksRemaining === 0 && this.state.geofencesSet) {
       this.setState({ gameOver: true });
     }
   }
 
   componentWillUnmount() {
-    Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
+    // stop geofencing if unmounting before game ends
+    Location.hasStartedGeofencingAsync(GEOFENCE_TASKNAME)
+      .then(bool => bool && Location.stopGeofencingAsync(GEOFENCE_TASKNAME));
   }
 
   render() {
@@ -99,7 +91,7 @@ class GameMapView extends Component {
               `You've completed all tasks in X time`,
               [{
                 text: 'End Game',
-                onPress: this._completeGame,
+                onPress: this._endGame,
                 style: 'cancel',
               }],
               { cancelable: true }
@@ -110,6 +102,20 @@ class GameMapView extends Component {
           <TaskList event={event} tasks={allTasks} />
         </BottomDrawer>
       </Container>
+    );
+  }
+
+  _createGeofences = () => {
+    Location.startGeofencingAsync(
+      GEOFENCE_TASKNAME,
+      this.props.allTasks.map(({id, latitude, longitude}) => {
+        return {
+          identifier: id.toString(),
+          latitude,
+          longitude,
+          radius: 30,  // in meters, increase this for a real event?
+        };
+      })
     );
   }
 
