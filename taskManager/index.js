@@ -1,30 +1,40 @@
 import { TaskManager, Location } from 'expo';
 import { Alert } from 'react-native';
-import store from '../store';
+import store, { completeTaskThunk } from '../store';
 
-TaskManager.defineTask('geofence', ({data, error}) => {
+export const GEOFENCE_TASKNAME = 'GEOFENCE';
+
+TaskManager.defineTask(GEOFENCE_TASKNAME, ({data, error}) => {
   if (error) return;
 
   const { eventType } = data;
   if (eventType === Location.GeofencingEventType.Enter) {
 
-    let tasks = store.getState().game.tasks;
+    const {tasks, teamTasks, eventTeamId} = store.getState().game;
+    const taskId = parseInt(data.region.identifier, 10);
 
-    Alert.alert(
-      `You found it!`,
-      `Entered ${tasks.filter(task => task.id === Number(data.region.identifier))[0].name}`,
-      [{
-        text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
-        style: 'cancel',
-      }],
-      { cancelable: true }
-    );
-    // insert thunk here that takes identifier (event id);
+    // Determine if task was already completed. If not, dispatch thunk to complete task
+    if (!isCompleted(teamTasks, taskId)) {
+      Alert.alert(
+        `You found it!`,
+        `Entered ${tasks.filter(task => task.id === taskId)[0].name}`,
+        [{
+          text: 'Complete Task',
+          onPress: () => dispatchCompleteTask(eventTeamId, taskId),
+          style: 'cancel',
+        }],
+        { cancelable: true }
+      );
+    }
   }
-  // else if (eventType === Location.GeofencingEventType.Exit) {
-
-  // }
 });
+
+const isCompleted = (teamTasks, taskId) => {
+  return teamTasks.find(task => task.taskId === taskId).completed;
+};
+
+const dispatchCompleteTask = (eventTeamId, taskId) => {
+  store.dispatch(completeTaskThunk(eventTeamId, taskId));
+};
 
 export default TaskManager;
