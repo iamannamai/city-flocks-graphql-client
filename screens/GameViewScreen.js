@@ -48,7 +48,7 @@ class GameMapView extends Component {
 
   render() {
     let { navigate } = this.props.navigation;
-    let { event, allTasks } = this.props;
+	let { event, allTasks, teamTasks } = this.props;
     return (
       <Container>
         {/* <Button
@@ -99,7 +99,7 @@ class GameMapView extends Component {
         }
 
         <BottomDrawer>
-          <TaskList event={event} tasks={allTasks} />
+          <TaskList event={event} tasks={allTasks} teamTasks={teamTasks} />
         </BottomDrawer>
       </Container>
     );
@@ -128,7 +128,8 @@ class GameMapView extends Component {
 
 const mapStateToProps = state => {
   return {
-    allTasks: state.game.tasks,
+	allTasks: state.game.tasks,
+	teamTasks: state.game.teamTasks,
     event: state.event.allEvents.filter(
       event => event.id === state.event.selectedEventId
     )[0],

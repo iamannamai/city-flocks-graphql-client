@@ -10,6 +10,7 @@ import {
 	Right,
 	Icon
 } from 'native-base';
+import DIMENSIONS from '../constants/Layout';
 
 const listItemStyle = {
 	flexDirection: 'row',
@@ -19,7 +20,8 @@ const listItemStyle = {
 const taskScoreStyle = {
 	flexDirection: 'row',
 	alignItems: 'center',
-	justifyContent: 'flex-end'
+	justifyContent: 'flex-end',
+	width: DIMENSIONS.window.width * 0.35
 };
 
 const completedItemStyle = {
@@ -35,7 +37,7 @@ const highlight = '#eb10b7';
 const gray = '#999';
 
 const TaskList = props => {
-	const { event, tasks } = props;
+	const { event, tasks, teamTasks } = props;
 	return event ? (
 		<Container>
 			<Header style={headerStyle}>
@@ -44,55 +46,28 @@ const TaskList = props => {
 			</Header>
 			<List avatar>
 				{
-					tasks.map(task => (
+					(teamTasks.length > 0) && tasks.map(task => {
+						const completed = teamTasks
+							.filter(teamTask => task.id === teamTask.taskId)[0]
+							.completed;
+						let iconName = `checkbox-${completed ? 'marked' : 'blank'}-outline`;
+						let iconColor = completed ? highlight : gray;
+
+						return (
 						<ListItem key={task.id} style={listItemStyle}>
-							<Text style={{width: 200}}>
+							<Text style={{width: DIMENSIONS.window.width * 0.6}}>
 								{task.description}
 							</Text>
 							<Right style={taskScoreStyle}>
 								<Text note>{`${task.points} pts`}</Text>
 								<Icon
-									style={{color: gray}}
+									style={{color: iconColor}}
 									type="MaterialCommunityIcons"
-									name="checkbox-blank-outline" />
+									name={iconName} />
 							</Right>
-						</ListItem>
-					))
+						</ListItem>);
+					})
 				}
-				<ListItem style={listItemStyle}>
-					<Text>Here's an item to do</Text>
-					<Right style={taskScoreStyle}>
-						<Text note>50pts</Text>
-						<Icon
-							style={{color: gray}}
-							type="MaterialCommunityIcons"
-							name="checkbox-blank-outline" />
-					</Right>
-				</ListItem>
-				<ListItem style={listItemStyle}>
-					<Text style={completedItemStyle}>
-						Here's something else
-					</Text>
-					<Right style={taskScoreStyle}>
-						<Text note>90pts</Text>
-						<Icon
-							style={{color: highlight}}
-							type="MaterialCommunityIcons"
-							name="checkbox-marked-outline" />
-					</Right>
-				</ListItem>
-				<ListItem style={listItemStyle}>
-					<Text style={completedItemStyle}>
-						Yet another thing to do here
-					</Text>
-					<Right style={taskScoreStyle}>
-						<Text note>100pts</Text>
-						<Icon
-							style={{color: highlight}}
-							type="MaterialCommunityIcons"
-							name="checkbox-marked-outline" />
-					</Right>
-				</ListItem>
 
 				<ListItem style={listItemStyle}>
 					<Text style={{textAlign: 'right'}}>
