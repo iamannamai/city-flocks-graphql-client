@@ -49,8 +49,6 @@ class GameMapView extends Component {
   render() {
     let { navigate } = this.props.navigation;
     let { event, allTasks } = this.props;
-    console.log(this.props.user.username, this.state);
-    console.log(event);
     return (
       <Container>
         {/* <Button
