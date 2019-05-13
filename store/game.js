@@ -60,7 +60,7 @@ export const resumeGameThunk = eventTeamId => async dispatch => {
 
 export const endGameThunk = (eventTeamId) => async dispatch => {
   try {
-    const { data: game } = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
+    await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
     dispatch(setEndGame());
   } catch (error) {
     console.error(error);
@@ -147,7 +147,7 @@ export default (state = defaultGame, action) => {
         teamTasksRemaining: state.teamTasksRemaining - 1
       };
     case END_GAME:
-      return defaultState;
+      return defaultGame;
     default:
       return state;
   }

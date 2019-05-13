@@ -83,7 +83,8 @@ export default function(state = defaultEvent, action) {
       return {
         ...state,
         myEvents: action.myEvents,
-        myEventIds: action.myEvents.map(event => event.eventId)
+        myEventIds: action.myEvents.map(event => event.eventId),
+        myActiveEvent: action.myEvents.find(event => event.status === 'ACTIVE')
       };
     case SET_SELECTED_EVENT:
 			return { ...state, selectedEventId: action.eventId };

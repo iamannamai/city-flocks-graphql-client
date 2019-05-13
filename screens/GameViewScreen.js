@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { MapView, Location, Permissions } from 'expo';
-import { Alert } from 'react-native';
+import { Alert,View } from 'react-native';
 import { Container, Button, Text, Icon } from 'native-base';
 import { connect } from 'react-redux';
+
 import { getTeamTasksThunk, getGameTasksThunk, endGameThunk } from '../store';
 import { GEOFENCE_TASKNAME } from '../taskManager';
 import BottomDrawer from '../components/BottomDrawer';
 import TaskList from '../components/TaskList';
+import Countdown from '../components/Countdown';
 
 class GameMapView extends Component {
   state = {
@@ -51,6 +53,9 @@ class GameMapView extends Component {
     let { event, allTasks } = this.props;
     return (
       <Container style={{zIndex: 2}}>
+
+        <Countdown endTime={this.props.endTime} handleExpire={this._endGame} />
+
         <Button
           rounded
           onPress={() => navigate('Main')}
@@ -134,7 +139,8 @@ const mapStateToProps = state => {
     )[0],
     eventTeamId: state.game.eventTeamId,
     eventId: state.game.eventId,
-    tasksRemaining: state.game.teamTasksRemaining
+    tasksRemaining: state.game.teamTasksRemaining,
+    endTime: state.event.myActiveEvent.endTime
   };
 };
 

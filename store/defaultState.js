@@ -5,7 +5,8 @@ export const defaultEvent = {
   myEvents: [],
   // stores array of just eventIds from myEvents
   myEventIds: [],
-  selectedEventId: 0
+  selectedEventId: 0,
+  myActiveEvent: {}
 };
 export const defaultGame = {
   eventId: 0,

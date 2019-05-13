@@ -17,12 +17,14 @@ import {
   ListItem,
 	Right,
 	Content,
-	Container
+  Container,
+  Toast
 } from 'native-base';
 
-import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk, resumeGameThunk } from '../store';
+import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk, resumeGameThunk, endGameThunk } from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
+import Countdown from '../components/Countdown';
 
 const avatar = require('../assets/images/avataaars.png');
 
@@ -81,6 +83,24 @@ class UserScreen extends Component {
             </CardItem>
           </Card>
           
+          {
+            this.props.activeEvent && (
+              <Card>
+                <CardItem>
+                <Left>
+                  <Countdown endTime={this.props.activeEvent.endTime} handleExpire={this._endGame} />
+                  <Text>Your team has an active event!</Text>
+                </Left>
+                <Right>
+                  <Button onPress={this._resumeGame} thumbnail>
+                    <Text>Resume</Text>
+                    </Button>
+                </Right>
+              </CardItem>
+              </Card>
+            )
+          }
+
           <Card>
             <CardItem header bordered>
               <Text>Events</Text>
@@ -125,7 +145,7 @@ class UserScreen extends Component {
                 <Text>Team</Text>
               </CardItem>
               <CardItem>
-                <H3>Almond-Lima</H3>
+                <H3>{team && team.name}</H3>
               </CardItem>
               <CardItem>
                 <Left>
@@ -169,10 +189,32 @@ class UserScreen extends Component {
   _startGame = () => {
     const eventTeam = this.props.myEvents
       .filter(event => event.eventId === this.props.selectedEventId)[0];
-    console.log(eventTeam);
-    if(eventTeam.status === 'ACTIVE')this.props.resumeGame(eventTeam.id);
-    else this.props.startGame(eventTeam.id);
+    if(this.props.activeEvent) Toast.show({
+      text: `You're already in a game! You can't start another game!`,
+      type: 'warning',
+      duration: 2000
+    });
+    else {
+      this.props.startGame(eventTeam.id);
+      if (this.props.eventTeamId) this._openMap();
+    }
+  }
+
+  _resumeGame = () => {
+    const { activeEvent } = this.props;
+    this.props.setSelectedEvent(activeEvent.eventId)
+    this.props.resumeGame(activeEvent.id);
     if (this.props.eventTeamId) this._openMap();
+  }
+
+  _endGame = () => {
+    const { activeEvent } = this.props;
+    this.props.endGame(activeEvent.id);
+    Toast.show({
+      text: `Your current event has ended`,
+      type: 'success',
+      duration: 2000
+    })
   }
 
   _openMap = () => {
@@ -188,7 +230,7 @@ const mapState = state => {
     myEventIds: state.event.myEventIds,
     selectedEventId: state.event.selectedEventId,
     eventTeamId: state.game.eventTeamId,
-    activeEvent: state.game.activeEvent
+    activeEvent: state.event.myActiveEvent
   };
 };
 
@@ -200,7 +242,7 @@ const mapDispatch = dispatch => {
     setSelectedEvent: id => dispatch(setSelectedEvent(id)),
     startGame: eventTeamId => dispatch(startGameThunk(eventTeamId)),
     resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
-
+    endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
   };
 };
 
