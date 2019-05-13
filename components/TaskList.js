@@ -21,7 +21,7 @@ const taskScoreStyle = {
 	flexDirection: 'row',
 	alignItems: 'center',
 	justifyContent: 'flex-end',
-	width: DIMENSIONS.window.width * 0.35
+	width: DIMENSIONS.window.width * 0.4
 };
 
 const completedItemStyle = {
@@ -30,14 +30,15 @@ const completedItemStyle = {
 
 const headerStyle = {
 	flexDirection: 'column',
-	alignItems: 'center'
+	alignItems: 'center',
+	marginTop: 24
 };
 
 const highlight = '#eb10b7';
 const gray = '#999';
 
 const TaskList = props => {
-	const { event, tasks, teamTasks } = props;
+	const { event, teamTasks } = props;
 	return event ? (
 		<Container>
 			<Header style={headerStyle}>
@@ -46,15 +47,13 @@ const TaskList = props => {
 			</Header>
 			<List avatar>
 				{
-					(teamTasks.length > 0) && tasks.map(task => {
-						const completed = teamTasks
-							.filter(teamTask => task.id === teamTask.taskId)[0]
-							.completed;
+					(teamTasks.length > 0) && teamTasks.map(task => {
+						const completed = task.completed;
 						let iconName = `checkbox-${completed ? 'marked' : 'blank'}-outline`;
 						let iconColor = completed ? highlight : gray;
 
 						return (
-						<ListItem key={task.id} style={listItemStyle}>
+						<ListItem key={task.taskId} style={listItemStyle}>
 							<Text style={{width: DIMENSIONS.window.width * 0.6}}>
 								{task.description}
 							</Text>

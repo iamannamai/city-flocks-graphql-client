@@ -99,7 +99,7 @@ class GameMapView extends Component {
         }
 
         <BottomDrawer>
-          <TaskList event={event} tasks={allTasks} teamTasks={teamTasks} />
+          <TaskList event={event} teamTasks={teamTasks} />
         </BottomDrawer>
       </Container>
     );
