@@ -20,7 +20,8 @@ import {
 	Container
 } from 'native-base';
 
-import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk } from '../store';
+import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk, setGameEvent } from '../store';
+import socket, { JOIN_TEAM_ROOM, GAME_START } from '../socket';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 
@@ -32,10 +33,15 @@ class UserScreen extends Component {
 	};
 
   componentDidMount() {
+    const { teamId } = this.props.user;
     this.props.getEvents();
-    if (this.props.user.teamId) {
-      this.props.getMyEvents(this.props.user.teamId);
+    if (teamId) {
+      this.props.getMyEvents(teamId);
+      socket.emit(JOIN_TEAM_ROOM, teamId);
     }
+    socket.on(GAME_START, game => {
+      this.props.setGameEvent(game);
+    });
   }
 
   componentDidUpdate(prevProps) {
@@ -87,7 +93,7 @@ class UserScreen extends Component {
             <CardItem>
               <Content>
                 <List>
-                  {events
+                  {events.length > 0
                     ? events.map(event => (
                       <EventsListItem
                         key={event.id}
@@ -195,7 +201,8 @@ const mapDispatch = dispatch => {
     getEvents: () => dispatch(getEventsThunk()),
     getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
     setSelectedEvent: id => dispatch(setSelectedEvent(id)),
-    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId))
+    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId)),
+    setGameEvent: game => dispatch(setGameEvent(game))
   };
 };
 
