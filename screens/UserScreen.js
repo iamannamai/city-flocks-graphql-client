@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Permissions } from 'expo';
 
 import { TouchableOpacity } from 'react-native';
 import {
@@ -33,7 +34,9 @@ class UserScreen extends Component {
     isModalVisible: false
 	};
 
-  componentDidMount() {
+  async componentDidMount() {
+    // Attempt to reconcile location permissions
+    await Permissions.askAsync(Permissions.LOCATION);
     this.props.getEvents();
     if (this.props.user.teamId) {
       this.props.getMyEvents(this.props.user.teamId);
