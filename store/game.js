@@ -84,7 +84,8 @@ export const getTeamTasksThunk = eventTeamId => async dispatch => {
       {
         ...task.event_team_task,
         name: task.name,
-        points: task.points
+        points: task.points,
+        description: task.description
       }
     ));
     dispatch(setTeamTasks(tasks));
