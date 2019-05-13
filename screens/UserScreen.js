@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import {
   Body,
 	Button,
@@ -40,7 +40,26 @@ class UserScreen extends Component {
       socket.emit(JOIN_TEAM_ROOM, teamId);
     }
     socket.on(GAME_START, game => {
-      this.props.setGameEvent(game);
+      Alert.alert(
+        'Game Start',
+        `A teammate has started the event ${game.name}`,
+        [
+          {
+            text: 'See Map',
+            onPress: () => this.props.setGameEvent(game),
+            style: 'cancel',
+          },
+          {
+            text: 'Dismiss',
+            onPress: () => console.log('Acknowledged'),
+            style: 'cancel'
+          }
+        ],
+        {
+          cancelable: true,
+          onDismiss: () => console.log('Acknowledged')
+        }
+      );
     });
   }
 
