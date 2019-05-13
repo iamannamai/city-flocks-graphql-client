@@ -14,15 +14,16 @@ const END_GAME = 'END_GAME';
 /**
  * INITIAL STATE
  */
-const defaultState = {
-  eventId: 0,
-  eventTeamId: 0,
-  tasks: [],
-  teamTasks: [],
-  teamTasksRemaining: 9999,
-  teammates: [],
-  endTime: Date.now()
-};
+
+// const defaultState = {
+//   eventId: 0,
+//   eventTeamId: 0,
+//   tasks: [],
+//   teamTasks: [],
+//   teammates: [],
+//   endTime: Date.now()
+// };
+import { defaultGame } from './defaultState';
 
 /**
  * ACTION CREATORS
@@ -48,9 +49,20 @@ export const startGameThunk = eventTeamId => async dispatch => {
   }
 };
 
+export const resumeGameThunk = eventTeamId => async dispatch => {
+  try {
+    // dispatch set eventId to the selectedEvent
+    const {data: game} = await axios.get(`${BASE_URL}/api/eventTeams/${eventTeamId}`);
+    // send request to start game
+    dispatch(setGameEvent(game));
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 export const endGameThunk = (eventTeamId) => async dispatch => {
   try {
-    const { data: game } = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
+    await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
     dispatch(setEndGame());
   } catch (error) {
     console.error(error);
@@ -74,7 +86,8 @@ export const getTeamTasksThunk = eventTeamId => async dispatch => {
       {
         ...task.event_team_task,
         name: task.name,
-        points: task.points
+        points: task.points,
+        description: task.description
       }
     ));
     dispatch(setTeamTasks(tasks));
@@ -106,7 +119,7 @@ export const completeTaskThunk = (eventTeamId, taskId) => async dispatch => {
   }
 };
 
-export default (state = defaultState, action) => {
+export default (state = defaultGame, action) => {
   switch (action.type) {
     case SET_GAME:
       return {
@@ -137,7 +150,7 @@ export default (state = defaultState, action) => {
         teamTasksRemaining: state.teamTasksRemaining - 1
       };
     case END_GAME:
-      return defaultState;
+      return defaultGame;
     default:
       return state;
   }

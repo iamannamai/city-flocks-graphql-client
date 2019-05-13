@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import { MapView, Location, Permissions } from 'expo';
-import { Alert } from 'react-native';
+import { Alert, View } from 'react-native';
 import { Container, Button, Text, Icon } from 'native-base';
 import { connect } from 'react-redux';
+
 import { getTeamTasksThunk, getGameTasksThunk, endGameThunk } from '../store';
 import { GEOFENCE_TASKNAME } from '../taskManager';
 import BottomDrawer from '../components/BottomDrawer';
 import TaskList from '../components/TaskList';
+import Countdown from '../components/Countdown';
 
 class GameMapView extends Component {
   state = {
@@ -48,16 +50,19 @@ class GameMapView extends Component {
 
   render() {
     let { navigate } = this.props.navigation;
-    let { event, allTasks } = this.props;
+	let { event, allTasks, teamTasks } = this.props;
     return (
-      <Container>
-        {/* <Button
+      <Container style={{zIndex: 2}}>
+
+        <Countdown endTime={this.props.endTime} handleExpire={this._endGame} />
+
+        <Button
           rounded
           onPress={() => navigate('Main')}
-          style={{left: 30, top: 50}}
+          style={{left: 30, top: 50, zIndex: 1}}
           >
-          <Icon type="FontAwesome" name="user" style={{left: 30, top: 50}} />
-        </Button> */}
+          <Icon type="FontAwesome" name="user" />
+        </Button>
         {event && (
           <MapView
             showsUserLocation={this.state.hasLocationPermission}
@@ -99,7 +104,7 @@ class GameMapView extends Component {
         }
 
         <BottomDrawer>
-          <TaskList event={event} tasks={allTasks} />
+          <TaskList event={event} teamTasks={teamTasks} />
         </BottomDrawer>
       </Container>
     );
@@ -128,14 +133,16 @@ class GameMapView extends Component {
 
 const mapStateToProps = state => {
   return {
-    allTasks: state.game.tasks,
+	allTasks: state.game.tasks,
+	teamTasks: state.game.teamTasks,
     event: state.event.allEvents.filter(
       event => event.id === state.game.eventId
     )[0],
     eventTeamId: state.game.eventTeamId,
     eventId: state.game.eventId,
     tasksRemaining: state.game.teamTasksRemaining,
-    user: state.user
+    user: state.user,
+    endTime: state.game.endTime || state.event.activeEvent.endTime
   };
 };
 

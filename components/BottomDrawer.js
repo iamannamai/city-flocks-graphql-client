@@ -1,14 +1,15 @@
 import React from 'react';
 import Drawer from 'rn-bottom-drawer';
+import DIMENSIONS from '../constants/Layout';
 
 const BottomDrawer = props => {
 	return (
 		<Drawer
-			containerHeight={800}
+			containerHeight={DIMENSIONS.window.height}
 			offset={0}
-			downDisplay={700}
+			downDisplay={DIMENSIONS.window.height - 80}
 			startUp={false}
-			backgroundColor="#fff"
+			backgroundColor="#fff"	
 		>
 			{props.children}
 		</Drawer>

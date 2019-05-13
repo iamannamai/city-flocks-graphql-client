@@ -18,11 +18,17 @@ TaskManager.defineTask(GEOFENCE_TASKNAME, ({data, error}) => {
       Alert.alert(
         `You found it!`,
         `Entered ${tasks.filter(task => task.id === taskId)[0].name}`,
-        [{
-          text: 'Complete Task',
-          onPress: () => dispatchCompleteTask(eventTeamId, taskId),
-          style: 'cancel',
-        }],
+        [
+          {
+            text: 'Complete Task',
+            onPress: () => dispatchCompleteTask(eventTeamId, taskId),
+            style: 'cancel',
+          },
+          {
+            text: 'Dismiss',
+            style: 'cancel'
+          }
+        ],
         { cancelable: true }
       );
     }

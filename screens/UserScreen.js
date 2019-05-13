@@ -5,33 +5,46 @@ import { Permissions } from 'expo';
 import { Alert, TouchableOpacity } from 'react-native';
 import {
   Body,
-	Button,
-	Card,
-	CardItem,
-	Text,
-	Icon,
-	H2,
-	H3,
-	List,
-	Thumbnail,
+  Button,
+  Card,
+  CardItem,
+  Text,
+  Icon,
+  H2,
+  H3,
+  List,
+  Thumbnail,
   Left,
   ListItem,
-	Right,
-	Content,
-	Container
+  Right,
+  Content,
+  Container,
+  Toast
 } from 'native-base';
 
-import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk, setGameEvent } from '../store';
 import socket, { JOIN_TEAM_ROOM, GAME_START } from '../socket';
+import {
+  logout,
+  getEventsThunk,
+  getMyEventsThunk,
+  setSelectedEvent,
+  startGameThunk,
+  resumeGameThunk,
+  endGameThunk,
+  setGameEvent,
+  setActiveEvent
+} from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
+import Countdown from '../components/Countdown';
 
 const avatar = require('../assets/images/avataaars.png');
 
 class UserScreen extends Component {
-	state = {
-		isModalVisible: false
-	};
+  state = {
+    isModalVisible: false,
+    showTimer: true
+  };
 
   async componentDidMount() {
     const { teamId } = this.props.user;
@@ -50,24 +63,32 @@ class UserScreen extends Component {
           {
             text: 'See Map',
             onPress: () => this.props.setGameEvent(game),
-            style: 'cancel',
+            style: 'cancel'
           },
           {
             text: 'Dismiss',
-            onPress: () => console.log('Acknowledged'),
+            onPress: () =>
+              this.props.setActiveEvent(
+                this.props.myEvents.find(event => event.id === game.id)
+              ),
             style: 'cancel'
           }
         ],
         {
           cancelable: true,
-          onDismiss: () => console.log('Acknowledged')
+          onDismiss: () => this.props.setActiveEvent(
+            this.props.myEvents.find(event => event.id === game.eventId)
+          )
         }
       );
     });
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.eventTeamId && prevProps.eventTeamId !== this.props.eventTeamId) {
+    if (
+      this.props.eventTeamId &&
+      prevProps.eventTeamId !== this.props.eventTeamId
+    ) {
       this._openMap();
     }
   }
@@ -78,7 +99,7 @@ class UserScreen extends Component {
 
   render() {
     let { allEvents, myEventIds } = this.props;
-    let { username } = this.props.user;
+    let { username, team } = this.props.user;
     let { navigate } = this.props.navigation;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
@@ -104,7 +125,7 @@ class UserScreen extends Component {
             >
               <Thumbnail source={avatar} />
               <H2>{`Welcome Back ${username}!`}</H2>
-              <Text>Almond Lima</Text>
+              <Text>{team && team.name}</Text>
             </CardItem>
             <CardItem style={{ justifyContent: 'center' }}>
               <Button onPress={this._signOutAsync}>
@@ -112,6 +133,26 @@ class UserScreen extends Component {
               </Button>
             </CardItem>
           </Card>
+
+          {this.props.activeEvent.id && this.state.showTimer && (
+            <Card>
+              <CardItem>
+                <Left>
+                  <Countdown
+                    endTime={this.props.activeEvent.endTime}
+                    handleExpire={this._endGame}
+                  />
+                  <Text>Your team has an active event!</Text>
+                </Left>
+                <Right>
+                  <Button onPress={this._resumeGame} thumbnail>
+                    <Text>Resume</Text>
+                  </Button>
+                </Right>
+              </CardItem>
+            </Card>
+          )}
+
           <Card>
             <CardItem header bordered>
               <Text>Events</Text>
@@ -119,22 +160,23 @@ class UserScreen extends Component {
             <CardItem>
               <Content>
                 <List>
-                  {events.length > 0
-                    ? events.map(event => (
+                  {events.length > 0 ? (
+                    events.map(event => (
                       <EventsListItem
                         key={event.id}
                         event={event}
                         handleOnPress={this._showModal}
-                        />
+                      />
                     ))
-                    : (
-                      <ListItem>
-                        <Body>
-                          <Text note>Your team is not signed up for any events</Text>
-                        </Body>
-                      </ListItem>
-                    )
-                  }
+                  ) : (
+                    <ListItem>
+                      <Body>
+                        <Text note>
+                          Your team is not signed up for any events
+                        </Text>
+                      </Body>
+                    </ListItem>
+                  )}
                 </List>
               </Content>
             </CardItem>
@@ -156,7 +198,7 @@ class UserScreen extends Component {
                 <Text>Team</Text>
               </CardItem>
               <CardItem>
-                <H3>Almond-Lima</H3>
+                <H3>{team && team.name}</H3>
               </CardItem>
               <CardItem>
                 <Left>
@@ -170,7 +212,9 @@ class UserScreen extends Component {
               <CardItem>
                 <Left>
                   <Icon type="FontAwesome" name="group" />
-                  <Text onPress={() => navigate('Teams')}>View Team-Mates!!!</Text>
+                  <Text onPress={() => navigate('Teams')}>
+                    View Team-Mates!!!
+                  </Text>
                 </Left>
                 <Right>
                   <Icon name="arrow-forward" />
@@ -183,31 +227,56 @@ class UserScreen extends Component {
     );
   }
 
-	_signOutAsync = async () => {
-		await this.props.logout();
-		this.props.navigation.navigate('Auth');
-	};
+  _signOutAsync = async () => {
+    await this.props.logout();
+    this.props.navigation.navigate('Auth');
+  };
 
-	_showModal = (eventId) => {
-		this.props.setSelectedEvent(eventId);
-		this.setState({ isModalVisible: true });
-	};
+  _showModal = eventId => {
+    this.props.setSelectedEvent(eventId);
+    this.setState({ isModalVisible: true });
+  };
 
-	_hideModal = () => {
-		this.setState({ isModalVisible: false });
+  _hideModal = () => {
+    this.setState({ isModalVisible: false });
   };
 
   _startGame = () => {
-    const eventTeamId = this.props.myEvents
-      .filter(event => event.eventId === this.props.selectedEventId)[0]
-      .id;
-    this.props.startGame(eventTeamId);
+    const eventTeam = this.props.myEvents.filter(
+      event => event.eventId === this.props.selectedEventId
+    )[0];
+    if (this.props.activeEvent.id)
+      Toast.show({
+        text: `You're already in a game! You can't start another game!`,
+        type: 'warning',
+        duration: 2000
+      });
+    else {
+      this.props.startGame(eventTeam.id);
+      if (this.props.eventTeamId) this._openMap();
+    }
+  };
+
+  _resumeGame = () => {
+    const { activeEvent } = this.props;
+    this.props.setSelectedEvent(activeEvent.eventId);
+    this.props.resumeGame(activeEvent.id);
     if (this.props.eventTeamId) this._openMap();
-  }
+  };
+
+  _endGame = () => {
+    const { activeEvent } = this.props;
+    this.props.endGame(activeEvent.id);
+    Toast.show({
+      text: `Your current event has ended`,
+      type: 'success',
+      duration: 2000
+    });
+  };
 
   _openMap = () => {
     this.props.navigation.navigate('Game');
-  }
+  };
 }
 
 const mapState = state => {
@@ -217,7 +286,8 @@ const mapState = state => {
     myEvents: state.event.myEvents,
     myEventIds: state.event.myEventIds,
     selectedEventId: state.event.selectedEventId,
-    eventTeamId: state.game.eventTeamId
+    eventTeamId: state.game.eventTeamId,
+    activeEvent: state.event.myActiveEvent || {}
   };
 };
 
@@ -228,8 +298,14 @@ const mapDispatch = dispatch => {
     getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
     setSelectedEvent: id => dispatch(setSelectedEvent(id)),
     startGame: eventTeamId => dispatch(startGameThunk(eventTeamId)),
-    setGameEvent: game => dispatch(setGameEvent(game))
+    setGameEvent: game => dispatch(setGameEvent(game)),
+    resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
+    endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
+    setActiveEvent: event => dispatch(setActiveEvent(event))
   };
 };
 
-export default connect(mapState, mapDispatch)(UserScreen);
+export default connect(
+  mapState,
+  mapDispatch
+)(UserScreen);
