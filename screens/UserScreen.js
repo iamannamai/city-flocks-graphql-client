@@ -2,27 +2,38 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Permissions } from 'expo';
 
-import { TouchableOpacity } from 'react-native';
+import { Alert, TouchableOpacity } from 'react-native';
 import {
   Body,
-	Button,
-	Card,
-	CardItem,
-	Text,
-	Icon,
-	H2,
-	H3,
-	List,
-	Thumbnail,
+  Button,
+  Card,
+  CardItem,
+  Text,
+  Icon,
+  H2,
+  H3,
+  List,
+  Thumbnail,
   Left,
   ListItem,
-	Right,
-	Content,
+  Right,
+  Content,
   Container,
   Toast
 } from 'native-base';
 
-import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk, resumeGameThunk, endGameThunk } from '../store';
+import socket, { JOIN_TEAM_ROOM, GAME_START } from '../socket';
+import {
+  logout,
+  getEventsThunk,
+  getMyEventsThunk,
+  setSelectedEvent,
+  startGameThunk,
+  resumeGameThunk,
+  endGameThunk,
+  setGameEvent,
+  setActiveEvent
+} from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 import Countdown from '../components/Countdown';
@@ -30,28 +41,65 @@ import Countdown from '../components/Countdown';
 const avatar = require('../assets/images/avataaars.png');
 
 class UserScreen extends Component {
-	state = {
-    isModalVisible: false
-	};
+  state = {
+    isModalVisible: false,
+    showTimer: true
+  };
 
   async componentDidMount() {
+    const { teamId } = this.props.user;
     // Attempt to reconcile location permissions
     await Permissions.askAsync(Permissions.LOCATION);
     this.props.getEvents();
-    if (this.props.user.teamId) {
-      this.props.getMyEvents(this.props.user.teamId);
+    if (teamId) {
+      this.props.getMyEvents(teamId);
+      socket.emit(JOIN_TEAM_ROOM, teamId);
     }
+    socket.on(GAME_START, game => {
+      Alert.alert(
+        'Game Start',
+        `A teammate has started the event ${game.name}`,
+        [
+          {
+            text: 'See Map',
+            onPress: () => this.props.setGameEvent(game),
+            style: 'cancel'
+          },
+          {
+            text: 'Dismiss',
+            onPress: () =>
+              this.props.setActiveEvent(
+                this.props.myEvents.find(event => event.id === game.id)
+              ),
+            style: 'cancel'
+          }
+        ],
+        {
+          cancelable: true,
+          onDismiss: () => this.props.setActiveEvent(
+            this.props.myEvents.find(event => event.id === game.eventId)
+          )
+        }
+      );
+    });
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.eventTeamId && prevProps.eventTeamId !== this.props.eventTeamId) {
+    if (
+      this.props.eventTeamId &&
+      prevProps.eventTeamId !== this.props.eventTeamId
+    ) {
       this._openMap();
     }
   }
 
+  componentWillUnmount() {
+    socket.removeListener(GAME_START);
+  }
+
   render() {
     let { allEvents, myEventIds } = this.props;
-    let { username,team } = this.props.user;
+    let { username, team } = this.props.user;
     let { navigate } = this.props.navigation;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
@@ -85,24 +133,25 @@ class UserScreen extends Component {
               </Button>
             </CardItem>
           </Card>
-          
-          {
-            this.props.activeEvent.id && (
-              <Card>
-                <CardItem>
+
+          {this.props.activeEvent.id && this.state.showTimer && (
+            <Card>
+              <CardItem>
                 <Left>
-                  <Countdown endTime={this.props.activeEvent.endTime} handleExpire={this._endGame} />
+                  <Countdown
+                    endTime={this.props.activeEvent.endTime}
+                    handleExpire={this._endGame}
+                  />
                   <Text>Your team has an active event!</Text>
                 </Left>
                 <Right>
                   <Button onPress={this._resumeGame} thumbnail>
                     <Text>Resume</Text>
-                    </Button>
+                  </Button>
                 </Right>
               </CardItem>
-              </Card>
-            )
-          }
+            </Card>
+          )}
 
           <Card>
             <CardItem header bordered>
@@ -111,22 +160,23 @@ class UserScreen extends Component {
             <CardItem>
               <Content>
                 <List>
-                  {events
-                    ? events.map(event => (
+                  {events.length > 0 ? (
+                    events.map(event => (
                       <EventsListItem
                         key={event.id}
                         event={event}
                         handleOnPress={this._showModal}
-                        />
+                      />
                     ))
-                    : (
-                      <ListItem>
-                        <Body>
-                          <Text note>Your team is not signed up for any events</Text>
-                        </Body>
-                      </ListItem>
-                    )
-                  }
+                  ) : (
+                    <ListItem>
+                      <Body>
+                        <Text note>
+                          Your team is not signed up for any events
+                        </Text>
+                      </Body>
+                    </ListItem>
+                  )}
                 </List>
               </Content>
             </CardItem>
@@ -162,7 +212,9 @@ class UserScreen extends Component {
               <CardItem>
                 <Left>
                   <Icon type="FontAwesome" name="group" />
-                  <Text onPress={() => navigate('Teams')}>View Team-Mates!!!</Text>
+                  <Text onPress={() => navigate('Teams')}>
+                    View Team-Mates!!!
+                  </Text>
                 </Left>
                 <Right>
                   <Icon name="arrow-forward" />
@@ -175,40 +227,42 @@ class UserScreen extends Component {
     );
   }
 
-	_signOutAsync = async () => {
-		await this.props.logout();
-		this.props.navigation.navigate('Auth');
-	};
+  _signOutAsync = async () => {
+    await this.props.logout();
+    this.props.navigation.navigate('Auth');
+  };
 
-	_showModal = (eventId) => {
-		this.props.setSelectedEvent(eventId);
-		this.setState({ isModalVisible: true });
-	};
+  _showModal = eventId => {
+    this.props.setSelectedEvent(eventId);
+    this.setState({ isModalVisible: true });
+  };
 
-	_hideModal = () => {
-		this.setState({ isModalVisible: false });
+  _hideModal = () => {
+    this.setState({ isModalVisible: false });
   };
 
   _startGame = () => {
-    const eventTeam = this.props.myEvents
-      .filter(event => event.eventId === this.props.selectedEventId)[0];
-    if(this.props.activeEvent.id) Toast.show({
-      text: `You're already in a game! You can't start another game!`,
-      type: 'warning',
-      duration: 2000
-    });
+    const eventTeam = this.props.myEvents.filter(
+      event => event.eventId === this.props.selectedEventId
+    )[0];
+    if (this.props.activeEvent.id)
+      Toast.show({
+        text: `You're already in a game! You can't start another game!`,
+        type: 'warning',
+        duration: 2000
+      });
     else {
       this.props.startGame(eventTeam.id);
       if (this.props.eventTeamId) this._openMap();
     }
-  }
+  };
 
   _resumeGame = () => {
     const { activeEvent } = this.props;
-    this.props.setSelectedEvent(activeEvent.eventId)
+    this.props.setSelectedEvent(activeEvent.eventId);
     this.props.resumeGame(activeEvent.id);
     if (this.props.eventTeamId) this._openMap();
-  }
+  };
 
   _endGame = () => {
     const { activeEvent } = this.props;
@@ -217,12 +271,12 @@ class UserScreen extends Component {
       text: `Your current event has ended`,
       type: 'success',
       duration: 2000
-    })
-  }
+    });
+  };
 
   _openMap = () => {
     this.props.navigation.navigate('Game');
-  }
+  };
 }
 
 const mapState = state => {
@@ -244,9 +298,14 @@ const mapDispatch = dispatch => {
     getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
     setSelectedEvent: id => dispatch(setSelectedEvent(id)),
     startGame: eventTeamId => dispatch(startGameThunk(eventTeamId)),
+    setGameEvent: game => dispatch(setGameEvent(game)),
     resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
+    setActiveEvent: event => dispatch(setActiveEvent(event))
   };
 };
 
-export default connect(mapState, mapDispatch)(UserScreen);
+export default connect(
+  mapState,
+  mapDispatch
+)(UserScreen);

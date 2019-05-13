@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { MapView, Location, Permissions } from 'expo';
-import { Alert,View } from 'react-native';
+import { Alert, View } from 'react-native';
 import { Container, Button, Text, Icon } from 'native-base';
 import { connect } from 'react-redux';
 
@@ -23,7 +23,7 @@ class GameMapView extends Component {
       this.props.getTeamTasks(this.props.eventTeamId);
     }
 
-    const { status } = await Permissions.askAsync(Permissions.LOCATION);
+    const { status } = await Permissions.getAsync(Permissions.LOCATION);
     const hasLocationPermission = status === 'granted';
 
     this.setState({
@@ -136,11 +136,12 @@ const mapStateToProps = state => {
 	allTasks: state.game.tasks,
 	teamTasks: state.game.teamTasks,
     event: state.event.allEvents.filter(
-      event => event.id === state.event.selectedEventId
+      event => event.id === state.game.eventId
     )[0],
     eventTeamId: state.game.eventTeamId,
     eventId: state.game.eventId,
     tasksRemaining: state.game.teamTasksRemaining,
+    user: state.user,
     endTime: state.game.endTime || state.event.activeEvent.endTime
   };
 };

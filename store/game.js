@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants/constants';
+import socket, { BROADCAST_GAME_START } from '../socket';
 
 /**
  * ACTION TYPES
@@ -27,7 +28,7 @@ import { defaultGame } from './defaultState';
 /**
  * ACTION CREATORS
  */
-const setGameEvent = game => ({ type: SET_GAME, game });
+export const setGameEvent = game => ({ type: SET_GAME, game });
 const setGameTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTeamTasks = tasks => ({ type: SET_TEAM_TASKS, tasks});
 const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
@@ -40,6 +41,7 @@ export const startGameThunk = eventTeamId => async dispatch => {
   try {
     // dispatch set eventId to the selectedEvent
     const {data: game} = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/activate`);
+    socket.emit(BROADCAST_GAME_START, game);
     // send request to start game
     dispatch(setGameEvent(game));
   } catch (error) {

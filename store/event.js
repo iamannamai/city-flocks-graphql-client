@@ -8,6 +8,7 @@ const SET_EVENTS = 'SET_EVENTS';
 const SET_SELECTED_EVENT = 'SET_SELECTED_EVENT';
 const SET_MY_EVENTS = 'SET_MY_EVENTS';
 const JOIN_EVENT = 'JOIN_EVENT';
+const SET_ACTIVE_EVENT = 'SET_ACTIVE_EVENT';
 
 /**
  * INITIAL STATE
@@ -29,6 +30,7 @@ import { defaultEvent } from './defaultState';
 const setEvents = events => ({ type: SET_EVENTS, events });
 const setMyEvents = myEvents => ({ type: SET_MY_EVENTS, myEvents });
 const joinEvent = event => ({ type: JOIN_EVENT, event });
+export const setActiveEvent = event => ({ type: SET_ACTIVE_EVENT, event});
 
 export const setSelectedEvent = eventId => ({
   type: SET_SELECTED_EVENT,
@@ -93,7 +95,15 @@ export default function(state = defaultEvent, action) {
 				...state,
 				myEvents: [...state.myEvents, action.event],
 				myEventIds: [...state.myEventIds, action.event.eventId]
-			};
+      };
+    case SET_ACTIVE_EVENT:
+      return {
+        ...state,
+        myActiveEvent: {
+          ...action.event,
+          status: 'ACTIVE'
+        }
+      };
     default:
       return state;
   }

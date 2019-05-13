@@ -27,7 +27,8 @@
     "redux": "^4.0.1",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.3.0",
-    "rn-bottom-drawer": "^1.4.3"
+    "rn-bottom-drawer": "^1.4.3",
+    "socket.io-client": "2.1.1"
   },
   "devDependencies": {
     "babel-preset-expo": "^5.0.0",
