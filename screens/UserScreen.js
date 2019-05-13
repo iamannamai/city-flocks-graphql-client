@@ -69,6 +69,10 @@ class UserScreen extends Component {
     }
   }
 
+  componentWillUnmount() {
+    socket.removeListener(GAME_START);
+  }
+
   render() {
     let { allEvents, myEventIds } = this.props;
     let { username } = this.props.user;
