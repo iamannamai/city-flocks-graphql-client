@@ -12,10 +12,12 @@ const SET_AVAILABLE_USERS = 'SET_AVAILABLE_USERS';
 /**
  * INITIAL STATE
  */
-const defaultState = {
-  myTeam: {},
-  potentialTeammates: []
-};
+
+// const defaultState = {
+//   myTeam: {},
+//   potentialTeammates: []
+// };
+import { defaultTeam } from './defaultState'
 
 /**
  * ACTION CREATORS
@@ -72,7 +74,7 @@ export const addUserToTeamThunk = (teamId, userId) => async dispatch => {
 /**
  * REDUCER
  */
-export default function(state = defaultState, action) {
+export default function(state = defaultTeam, action) {
   switch (action.type) {
     case SET_MY_TEAM:
       return { ...state, myTeam: action.team };

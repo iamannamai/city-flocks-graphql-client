@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Permissions } from 'expo';
 
 import { TouchableOpacity } from 'react-native';
 import {
@@ -17,21 +18,25 @@ import {
   ListItem,
 	Right,
 	Content,
-	Container
+  Container,
+  Toast
 } from 'native-base';
 
-import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk } from '../store';
+import { logout, getEventsThunk, getMyEventsThunk, setSelectedEvent, startGameThunk, resumeGameThunk, endGameThunk } from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
+import Countdown from '../components/Countdown';
 
 const avatar = require('../assets/images/avataaars.png');
 
 class UserScreen extends Component {
 	state = {
-		isModalVisible: false
+    isModalVisible: false
 	};
 
-  componentDidMount() {
+  async componentDidMount() {
+    // Attempt to reconcile location permissions
+    await Permissions.askAsync(Permissions.LOCATION);
     this.props.getEvents();
     if (this.props.user.teamId) {
       this.props.getMyEvents(this.props.user.teamId);
@@ -46,7 +51,7 @@ class UserScreen extends Component {
 
   render() {
     let { allEvents, myEventIds } = this.props;
-    let { username } = this.props.user;
+    let { username,team } = this.props.user;
     let { navigate } = this.props.navigation;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
@@ -72,7 +77,7 @@ class UserScreen extends Component {
             >
               <Thumbnail source={avatar} />
               <H2>{`Welcome Back ${username}!`}</H2>
-              <Text>Almond Lima</Text>
+              <Text>{team && team.name}</Text>
             </CardItem>
             <CardItem style={{ justifyContent: 'center' }}>
               <Button onPress={this._signOutAsync}>
@@ -80,6 +85,25 @@ class UserScreen extends Component {
               </Button>
             </CardItem>
           </Card>
+          
+          {
+            this.props.activeEvent && (
+              <Card>
+                <CardItem>
+                <Left>
+                  <Countdown endTime={this.props.activeEvent.endTime} handleExpire={this._endGame} />
+                  <Text>Your team has an active event!</Text>
+                </Left>
+                <Right>
+                  <Button onPress={this._resumeGame} thumbnail>
+                    <Text>Resume</Text>
+                    </Button>
+                </Right>
+              </CardItem>
+              </Card>
+            )
+          }
+
           <Card>
             <CardItem header bordered>
               <Text>Events</Text>
@@ -124,7 +148,7 @@ class UserScreen extends Component {
                 <Text>Team</Text>
               </CardItem>
               <CardItem>
-                <H3>Almond-Lima</H3>
+                <H3>{team && team.name}</H3>
               </CardItem>
               <CardItem>
                 <Left>
@@ -166,11 +190,34 @@ class UserScreen extends Component {
   };
 
   _startGame = () => {
-    const eventTeamId = this.props.myEvents
-      .filter(event => event.eventId === this.props.selectedEventId)[0]
-      .id;
-    this.props.startGame(eventTeamId);
+    const eventTeam = this.props.myEvents
+      .filter(event => event.eventId === this.props.selectedEventId)[0];
+    if(this.props.activeEvent) Toast.show({
+      text: `You're already in a game! You can't start another game!`,
+      type: 'warning',
+      duration: 2000
+    });
+    else {
+      this.props.startGame(eventTeam.id);
+      if (this.props.eventTeamId) this._openMap();
+    }
+  }
+
+  _resumeGame = () => {
+    const { activeEvent } = this.props;
+    this.props.setSelectedEvent(activeEvent.eventId)
+    this.props.resumeGame(activeEvent.id);
     if (this.props.eventTeamId) this._openMap();
+  }
+
+  _endGame = () => {
+    const { activeEvent } = this.props;
+    this.props.endGame(activeEvent.id);
+    Toast.show({
+      text: `Your current event has ended`,
+      type: 'success',
+      duration: 2000
+    })
   }
 
   _openMap = () => {
@@ -185,7 +232,8 @@ const mapState = state => {
     myEvents: state.event.myEvents,
     myEventIds: state.event.myEventIds,
     selectedEventId: state.event.selectedEventId,
-    eventTeamId: state.game.eventTeamId
+    eventTeamId: state.game.eventTeamId,
+    activeEvent: state.event.myActiveEvent
   };
 };
 
@@ -195,7 +243,9 @@ const mapDispatch = dispatch => {
     getEvents: () => dispatch(getEventsThunk()),
     getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
     setSelectedEvent: id => dispatch(setSelectedEvent(id)),
-    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId))
+    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId)),
+    resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
+    endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
   };
 };
 
