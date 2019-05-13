@@ -40,6 +40,9 @@ const gray = '#999';
 
 const TaskList = props => {
 	const { event, teamTasks } = props;
+	const currentScore = teamTasks.reduce((a, task) => {
+		return task.completed ? a + task.points : a;
+	}, 0);
 	return event ? (
 		<Container>
 			<Header style={headerStyle}>
@@ -74,7 +77,7 @@ const TaskList = props => {
 						TOTAL POINTS:
 					</Text>
 					<Right style={taskScoreStyle}>
-						<Text>190 pts</Text>
+						<Text>{`${currentScore} pts`}</Text>
 					</Right>
 				</ListItem>
 			</List>
