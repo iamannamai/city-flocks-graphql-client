@@ -87,7 +87,7 @@ class UserScreen extends Component {
           </Card>
           
           {
-            this.props.activeEvent && (
+            this.props.activeEvent.id && (
               <Card>
                 <CardItem>
                 <Left>
@@ -192,7 +192,7 @@ class UserScreen extends Component {
   _startGame = () => {
     const eventTeam = this.props.myEvents
       .filter(event => event.eventId === this.props.selectedEventId)[0];
-    if(this.props.activeEvent) Toast.show({
+    if(this.props.activeEvent.id) Toast.show({
       text: `You're already in a game! You can't start another game!`,
       type: 'warning',
       duration: 2000
@@ -233,7 +233,7 @@ const mapState = state => {
     myEventIds: state.event.myEventIds,
     selectedEventId: state.event.selectedEventId,
     eventTeamId: state.game.eventTeamId,
-    activeEvent: state.event.myActiveEvent
+    activeEvent: state.event.myActiveEvent || {}
   };
 };
 

@@ -141,7 +141,7 @@ const mapStateToProps = state => {
     eventTeamId: state.game.eventTeamId,
     eventId: state.game.eventId,
     tasksRemaining: state.game.teamTasksRemaining,
-    endTime: state.event.myActiveEvent.endTime
+    endTime: state.game.endTime || state.event.activeEvent.endTime
   };
 };
 
