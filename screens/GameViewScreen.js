@@ -120,7 +120,7 @@ class GameMapView extends Component {
           identifier: id.toString(),
           latitude,
           longitude,
-          radius: 20,  // in meters, increase this for a real event?
+          radius: 15,  // in meters, increase this for a real event?
         };
       })
     );
