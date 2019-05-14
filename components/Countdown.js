@@ -1,7 +1,9 @@
 import React from 'react';
+import  { View } from 'react-native';
 import TimerCountdown from 'react-native-timer-countdown';
  
 const Countdown = (props) => (
+  <View>
     <TimerCountdown
       initialMilliseconds={props.endTime - Date.now()}
       onExpire={props.handleExpire}
@@ -19,6 +21,7 @@ const Countdown = (props) => (
       allowFontScaling={true}
       style={props.styling}
     />
+    </View>
 );
 
 export default Countdown
