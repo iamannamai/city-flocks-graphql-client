@@ -103,6 +103,11 @@ class ClueCollection extends Component {
 
 	render() {
 		const secondsRemaining = this.props.secondsRemaining || 720;
+		const totalClues = this.solution.length;
+		const clueList = new Array(totalClues).fill(' ');
+		this.currentClues.forEach((clue, i) => {
+			clueList[i] = clue;
+		});
 		return (
 			<Container>
 			<Content>
@@ -113,7 +118,7 @@ class ClueCollection extends Component {
 					</CardItem>
 					<CardItem style={{justifyContent: 'space-between'}}>
 						{
-							this.currentClues.map((clue, i) => {
+							clueList.map((clue, i) => {
 								return (
 									<Text
 										style={clueStyle}
