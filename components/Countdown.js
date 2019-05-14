@@ -17,7 +17,7 @@ const Countdown = (props) => (
         return h + m + ':' + s;
       }}
       allowFontScaling={true}
-      style={{ fontSize: 10 }}
+      style={props.styling}
     />
 );
 

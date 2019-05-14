@@ -141,6 +141,7 @@ class UserScreen extends Component {
                   <Countdown
                     endTime={this.props.activeEvent.endTime}
                     handleExpire={this._endGame}
+                    styling={{ fontSize: 10, flex: 0, justifyContent: "center", alignItems: "center" }}
                   />
                   <Text>Your team has an active event!</Text>
                 </Left>
