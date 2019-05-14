@@ -134,7 +134,7 @@ class ClueCollection extends Component {
 								value={this.state.solution}
 								onChange={this.handleSolutionInput} />
 						</Item>
-						<Button full onPress={() => this.checkSolution(secondsRemaining)}>
+						<Button block onPress={() => this.checkSolution(secondsRemaining)}>
 							<Text>Submit Final Answer!</Text>
 						</Button>
 					</CardItem>
