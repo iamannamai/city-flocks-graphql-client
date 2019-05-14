@@ -9,7 +9,7 @@ const BottomDrawer = props => {
 			offset={0}
 			downDisplay={DIMENSIONS.window.height - 80}
 			startUp={false}
-			backgroundColor="#fff"	
+			backgroundColor="#fff"
 		>
 			{props.children}
 		</Drawer>

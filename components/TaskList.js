@@ -8,7 +8,8 @@ import {
 	Title,
 	Subtitle,
 	Right,
-	Icon
+	Icon,
+	Content
 } from 'native-base';
 import DIMENSIONS from '../constants/Layout';
 
@@ -46,41 +47,45 @@ const TaskList = props => {
 	return event ? (
 		<Container>
 			<Header style={headerStyle}>
-				<Title>Tasks</Title>
-				<Subtitle>Event: {event.name}</Subtitle>
+				<Title style={{fontSize: 22}}>Tasks</Title>
+				<Subtitle style={{fontSize: 16}}>
+					Event: {event.name}
+				</Subtitle>
 			</Header>
-			<List avatar style={{zIndex: 2}}>
-				{
-					(teamTasks.length > 0) && teamTasks.map(task => {
-						const completed = task.completed;
-						let iconName = `checkbox-${completed ? 'marked' : 'blank'}-outline`;
-						let iconColor = completed ? highlight : gray;
+			<Content>
+				<List avatar style={{zIndex: 2}}>
+					{
+						(teamTasks.length > 0) && teamTasks.map(task => {
+							const completed = task.completed;
+							let iconName = `checkbox-${completed ? 'marked' : 'blank'}-outline`;
+							let iconColor = completed ? highlight : gray;
 
-						return (
-						<ListItem key={task.taskId} style={listItemStyle}>
-							<Text style={{width: DIMENSIONS.window.width * 0.6}}>
-								{task.description}
-							</Text>
-							<Right style={taskScoreStyle}>
-								<Text note>{`${task.points} pts`}</Text>
-								<Icon
-									style={{color: iconColor}}
-									type="MaterialCommunityIcons"
-									name={iconName} />
-							</Right>
-						</ListItem>);
-					})
-				}
+							return (
+							<ListItem key={task.taskId} style={listItemStyle}>
+								<Text style={{width: DIMENSIONS.window.width * 0.6}}>
+									{task.description}
+								</Text>
+								<Right style={taskScoreStyle}>
+									<Text note>{`${task.points} pts`}</Text>
+									<Icon
+										style={{color: iconColor}}
+										type="MaterialCommunityIcons"
+										name={iconName} />
+								</Right>
+							</ListItem>);
+						})
+					}
 
-				<ListItem style={listItemStyle}>
-					<Text style={{textAlign: 'right'}}>
-						TOTAL POINTS:
-					</Text>
-					<Right style={taskScoreStyle}>
-						<Text>{`${currentScore} pts`}</Text>
-					</Right>
-				</ListItem>
-			</List>
+					<ListItem style={listItemStyle}>
+						<Text style={{textAlign: 'right'}}>
+							TOTAL POINTS:
+						</Text>
+						<Right style={taskScoreStyle}>
+							<Text>{`${currentScore} pts`}</Text>
+						</Right>
+					</ListItem>
+				</List>
+			</Content>
 		</Container>
 	) : null;
 };
