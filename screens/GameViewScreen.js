@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { MapView, Location, Permissions } from 'expo';
-import { Alert, View } from 'react-native';
-import { Container, Button, Text, Icon } from 'native-base';
+import { Alert,View } from 'react-native';
+import { Container, Button, Icon } from 'native-base';
 import { connect } from 'react-redux';
 
 import { getTeamTasksThunk, getGameTasksThunk, endGameThunk } from '../store';
@@ -54,8 +54,10 @@ class GameMapView extends Component {
 	let { event, allTasks, teamTasks } = this.props;
     return (
       <Container style={{zIndex: 2}}>
-
-        <Countdown endTime={this.props.endTime} handleExpire={this._endGame} />
+            <Countdown 
+            endTime={this.props.endTime} 
+            handleExpire={this._endGame} 
+            styling={{ fontSize: 30, flex: -1, flexShrink:10, left: 270, top: 50, zIndex: 1 }} />
 
         <Button
           rounded
