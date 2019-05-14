@@ -8,6 +8,7 @@ import { getTeamTasksThunk, getGameTasksThunk, endGameThunk } from '../store';
 import { GEOFENCE_TASKNAME } from '../taskManager';
 import BottomDrawer from '../components/BottomDrawer';
 import TaskList from '../components/TaskList';
+import ClueCollection from '../components/ClueCollection';
 import Countdown from '../components/Countdown';
 
 class GameMapView extends Component {
@@ -107,6 +108,7 @@ class GameMapView extends Component {
 
         <BottomDrawer>
           <TaskList event={event} teamTasks={teamTasks} />
+          <ClueCollection clues={[]} />
         </BottomDrawer>
       </Container>
     );
