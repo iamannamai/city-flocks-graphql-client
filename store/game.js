@@ -145,7 +145,7 @@ export default (state = defaultGame, action) => {
       return {
         ...state,
         teamTasks: state.teamTasks.map(task => (
-          task.id === action.taskId ? { ...task, completed: true } : task
+          task.taskId === action.taskId ? { ...task, completed: true } : task
         )),
         teamTasksRemaining: state.teamTasksRemaining - 1
       };

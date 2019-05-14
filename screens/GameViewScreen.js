@@ -57,7 +57,7 @@ class GameMapView extends Component {
             <Countdown 
             endTime={this.props.endTime} 
             handleExpire={this._endGame} 
-            styling={{ fontSize: 30, flex: -1, flexShrink:10, left: 270, top: 50, zIndex: 1 }} />
+            styling={{ fontSize: 30, flex: -1, flexShrink:10, left: 230, top: 50, zIndex: 1 }} />
 
         <Button
           rounded
@@ -122,7 +122,7 @@ class GameMapView extends Component {
           identifier: id.toString(),
           latitude,
           longitude,
-          radius: 20,  // in meters, increase this for a real event?
+          radius: 15,  // in meters, increase this for a real event?
         };
       })
     );

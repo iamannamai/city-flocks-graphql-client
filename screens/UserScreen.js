@@ -262,6 +262,7 @@ class UserScreen extends Component {
     const { activeEvent } = this.props;
     this.props.setSelectedEvent(activeEvent.eventId);
     this.props.resumeGame(activeEvent.id);
+    this.setState({showTimer: false})
     if (this.props.eventTeamId) this._openMap();
   };
 
