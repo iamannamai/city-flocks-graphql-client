@@ -4,12 +4,24 @@ import { Alert } from 'react-native';
 import { Container, Button, Icon, Toast } from 'native-base';
 import { connect } from 'react-redux';
 
-import { getTeamTasksThunk, getGameTasksThunk, endGameThunk, completeTaskThunk, setTaskComplete } from '../store';
+import {
+  getTeamTasksThunk,
+  getGameTasksThunk,
+  endGameThunk,
+  completeTaskThunk,
+  setTaskComplete
+} from '../store';
 import { GEOFENCE_TASKNAME } from '../taskManager';
 import BottomDrawer from '../components/BottomDrawer';
 import TaskList from '../components/TaskList';
+import ClueCollection from '../components/ClueCollection';
 import Countdown from '../components/Countdown';
-import socket, { BROADCAST_JOINED_GAME, JOINED_GAME, CONFIRM_TEAM_PRESENCE, COMPLETE_TASK } from '../socket';
+import socket, {
+  BROADCAST_JOINED_GAME,
+  JOINED_GAME,
+  CONFIRM_TEAM_PRESENCE,
+  COMPLETE_TASK
+} from '../socket';
 
 class GameMapView extends Component {
   state = {
@@ -39,12 +51,15 @@ class GameMapView extends Component {
         });
       });
 
-      socket.on(CONFIRM_TEAM_PRESENCE, ({ isTeamPresent, missingPlayerCount, taskId }) => {
-        console.log("All your team is here: ", isTeamPresent);
-        this._showTaskCompleteAlert(isTeamPresent, taskId);
-      });
+      socket.on(
+        CONFIRM_TEAM_PRESENCE,
+        ({ isTeamPresent, missingPlayerCount, taskId }) => {
+          console.log('All your team is here: ', isTeamPresent);
+          this._showTaskCompleteAlert(isTeamPresent, taskId);
+        }
+      );
 
-      socket.on(COMPLETE_TASK, (taskId) => {
+      socket.on(COMPLETE_TASK, taskId => {
         this.props.setTaskComplete(taskId);
       });
     }
@@ -90,7 +105,7 @@ class GameMapView extends Component {
             fontSize: 30,
             flex: -1,
             flexShrink: 10,
-            left: 270,
+            left: 230,
             top: 50,
             zIndex: 1
           }}
@@ -145,6 +160,7 @@ class GameMapView extends Component {
 
         <BottomDrawer>
           <TaskList event={event} teamTasks={teamTasks} />
+          <ClueCollection clues={[]} />
         </BottomDrawer>
       </Container>
     );
@@ -158,7 +174,7 @@ class GameMapView extends Component {
           identifier: id.toString(),
           latitude,
           longitude,
-          radius: 20 // in meters, increase this for a real event?
+          radius: 15 // in meters, increase this for a real event?
         };
       })
     );
@@ -168,33 +184,37 @@ class GameMapView extends Component {
     console.log(this.props.allTasks.filter(task => task.id === Number(taskId)));
     isTeamPresent
       ? Alert.alert(
-        `You found a clue!`,
-        `You've made it to ${this.props.allTasks.filter(task => task.id === Number(taskId))[0].name} and collected the following clues: ${`ABC`}`,
-        [
-          {
-            text: 'Complete Task',
-            onPress: () => this.props.completeTask(this.props.eventTeamId, taskId),
-            style: 'cancel',
-          },
-          {
-            text: 'Dismiss',
-            style: 'cancel'
-          }
-        ],
-        { cancelable: true }
-      )
+          `You found a clue!`,
+          `You've made it to ${
+            this.props.allTasks.filter(task => task.id === Number(taskId))[0]
+              .name
+          } and collected the following clues: ${`ABC`}`,
+          [
+            {
+              text: 'Complete Task',
+              onPress: () =>
+                this.props.completeTask(this.props.eventTeamId, taskId),
+              style: 'cancel'
+            },
+            {
+              text: 'Dismiss',
+              style: 'cancel'
+            }
+          ],
+          { cancelable: true }
+        )
       : Alert.alert(
-        `You've found something!`,
-        `Waiting for the test of your team to arrive to reveal your clue`,
-        [
-          {
-            text: 'Dismiss',
-            style: 'cancel'
-          }
-        ],
-        { cancelable: true }
-      );
-  }
+          `You've found something!`,
+          `Waiting for the test of your team to arrive to reveal your clue`,
+          [
+            {
+              text: 'Dismiss',
+              style: 'cancel'
+            }
+          ],
+          { cancelable: true }
+        );
+  };
 
   _endGame = () => {
     Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
@@ -223,7 +243,8 @@ const mapDispatchToProps = dispatch => {
     getTeamTasks: eventTeamId => dispatch(getTeamTasksThunk(eventTeamId)),
     getGameTasks: eventId => dispatch(getGameTasksThunk(eventId)),
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
-    completeTask: (eventTeamId, taskId) => dispatch(completeTaskThunk(eventTeamId, taskId)),
+    completeTask: (eventTeamId, taskId) =>
+      dispatch(completeTaskThunk(eventTeamId, taskId)),
     // update store on a COMPLETE_TASK event
     setTaskComplete: taskId => dispatch(setTaskComplete(taskId))
   };

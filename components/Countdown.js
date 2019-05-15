@@ -1,4 +1,5 @@
 import React from 'react';
+import  { View } from 'react-native';
 import TimerCountdown from 'react-native-timer-countdown';
  
 const Countdown = (props) => (

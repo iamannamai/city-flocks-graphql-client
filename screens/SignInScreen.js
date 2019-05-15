@@ -48,6 +48,7 @@ class SignInScreen extends React.Component {
       <DismissKeyboard>
         {/* <KeyboardAvoidingView behavior="position" enabled> */}
         <Container style={styles.container}>
+
           <Content contentContainerStyle={styles.welcomeContainer}>
             <Image
               source={require('../assets/images/splash.png')}
@@ -103,18 +104,17 @@ export default connect(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center'
+    backgroundColor: '#fff'
   },
   welcomeContainer: {
-    marginTop: layout.window.height * 0.1,
+    marginTop: 32,
     backgroundColor: '#fff',
     paddingHorizontal: 20
   },
   welcomeImage: {
+    height: 240,
     width: layout.window.width * 0.9,
-    // resizeMode: 'contain',
-    marginBottom: 10,
+    resizeMode: 'contain',
     marginHorizontal: 'auto'
   }
 });
