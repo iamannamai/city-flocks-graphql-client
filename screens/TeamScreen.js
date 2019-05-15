@@ -20,7 +20,8 @@ import {
   createTeamThunk,
   getAvailableUsersThunk,
   addUserToTeamThunk,
-  me
+  me,
+  userTeamThunk
 } from '../store';
 
 class TeamScreen extends Component {
@@ -57,7 +58,7 @@ class TeamScreen extends Component {
 
   async createTeam() {
     await this.props.createTeam(this.state.teamNameInput);
-    this.props.getUserData();
+    await this.props.getUserData(this.props.user.id);
   }
 
   render() {
@@ -148,7 +149,7 @@ const mapDispatchToProps = dispatch => {
   return {
     getTeamData: teamId => dispatch(getTeamDataThunk(teamId)),
     createTeam: teamName => dispatch(createTeamThunk(teamName)),
-    getUserData: () => dispatch(me()),
+    getUserData: (userId) => dispatch(userTeamThunk(userId)),
     getAvailableUsers: () => dispatch(getAvailableUsersThunk()),
     addUser: (teamId, userId) => dispatch(addUserToTeamThunk(teamId, userId))
   };

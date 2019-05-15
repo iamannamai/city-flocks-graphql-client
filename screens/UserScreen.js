@@ -33,7 +33,8 @@ import {
   endGameThunk,
   setGameEvent,
   setActiveEvent,
-  removeTeamThunk
+  removeUserTeamThunk,
+  clearTeam
 } from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
@@ -214,6 +215,7 @@ class UserScreen extends Component {
                 </Right>
               </CardItem>
               <CardItem>
+              <TouchableOpacity onPress={this._removeTeam}>
                 <Left>
                   <Icon type="FontAwesome" name="sign-out" />
                   <Text>Leave Team</Text>
@@ -221,6 +223,7 @@ class UserScreen extends Component {
                 <Right>
                   <Icon name="arrow-forward" />
                 </Right>
+              </TouchableOpacity>
               </CardItem>
             </Card>
           </Content>
@@ -278,8 +281,8 @@ class UserScreen extends Component {
   };
 
   _removeTeam = () => {
-    const { id, teamId } = this.props.user;
-    this.props.removeTeam (id,teamId);
+    this.props.removeUserTeam(this.props.user.id);
+    this.props.clearTeam()
   }
 
   _openMap = () => {
@@ -310,7 +313,8 @@ const mapDispatch = dispatch => {
     resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
     setActiveEvent: event => dispatch(setActiveEvent(event)),
-    removeTeam: (userId,teamId) => dispatch(removeTeamThunk(userId,teamId))
+    removeUserTeam: userId => dispatch(removeUserTeamThunk(userId)),
+    clearTeam: () => dispatch(clearTeam())
   };
 };
 

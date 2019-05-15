@@ -9,6 +9,7 @@ const SET_MY_TEAM = 'SET_MY_TEAM';
 const CREATE_TEAM = 'CREATE_TEAM';
 const ADD_TO_TEAM = 'ADD_TO_TEAM';
 const SET_AVAILABLE_USERS = 'SET_AVAILABLE_USERS';
+const CLEAR_TEAM = 'CLEAR_TEAM';
 
 /**
  * INITIAL STATE
@@ -27,6 +28,7 @@ const setMyTeam = team => ({ type: SET_MY_TEAM, team });
 const createTeam = team => ({ type: CREATE_TEAM, team });
 const setAvailableUsers = users => ({ type: SET_AVAILABLE_USERS, users });
 const addToTeam = user => ({ type: ADD_TO_TEAM, user});
+export const clearTeam = team => ({ type: CLEAR_TEAM, team });
 
 /**
  * THUNK CREATORS
@@ -45,8 +47,7 @@ export const getTeamDataThunk = teamId => async dispatch => {
 export const createTeamThunk = teamName => async dispatch => {
   try {
     const res = await axios.post(`${BASE_URL}/api/teams`, { name: teamName });
-    dispatch(createTeam(res));
-    dispatch(me());
+    dispatch(createTeam(res.data));
   } catch (error) {
     console.error(error);
   }
@@ -93,6 +94,8 @@ export default function(state = defaultTeam, action) {
       };
     case SET_AVAILABLE_USERS:
       return { ...state, potentialTeammates: action.users };
+    case CLEAR_TEAM: 
+      return {...state,myTeam: {}};
     default:
       return state;
   }

@@ -34,6 +34,17 @@ export const me = () => async dispatch => {
   }
 };
 
+export const userTeamThunk = (userId) => async dispatch => {
+  try {
+    console.log(userId);
+    const id = parseInt(userId);
+    const res = await axios.get(`${BASE_URL}/api/users/${id}/team`);
+    dispatch(getUser(res.data || defaultUser));
+  } catch (err) {
+    console.error(err);
+  }
+};
+
 export const auth = (credentials, method) => async dispatch => {
   let res;
   try {
@@ -58,10 +69,10 @@ export const logout = () => async dispatch => {
   }
 };
 
-export const removeTeamThunk = (userId,teamId) => async dispatch => {
+export const removeUserTeamThunk = (userId) => async dispatch => {
   try {
-    const user = await axios.put(`${BASE_URL}/api/users/${userId}/team`,teamId);
-    dispatch(getUser(user));
+    const res = await axios.put(`${BASE_URL}/api/users/${userId}/team`);
+    dispatch(getUser(res.data));
   } catch (err) {
     console.error(err);
   }
