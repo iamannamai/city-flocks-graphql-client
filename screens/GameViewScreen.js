@@ -9,7 +9,9 @@ import {
   getGameTasksThunk,
   endGameThunk,
   completeTaskThunk,
-  setTaskComplete
+  setTaskComplete,
+  setEndGame,
+  exitGame
 } from '../store';
 import { GEOFENCE_TASKNAME } from '../taskManager';
 import BottomDrawer from '../components/BottomDrawer';
@@ -18,9 +20,10 @@ import ClueCollection from '../components/ClueCollection';
 import Countdown from '../components/Countdown';
 import socket, {
   BROADCAST_JOINED_GAME,
-  JOINED_GAME,
   CONFIRM_TEAM_PRESENCE,
-  COMPLETE_TASK
+  COMPLETE_TASK,
+  END_GAME,
+  JOINED_GAME
 } from '../socket';
 
 class GameMapView extends Component {
@@ -44,13 +47,13 @@ class GameMapView extends Component {
         eventTeamId: this.props.eventTeamId,
         username: this.props.user.username
       });
+
       socket.on(JOINED_GAME, username => {
         Toast.show({
           text: `${username} has joined`,
           duration: 2000
         });
       });
-
       socket.on(
         CONFIRM_TEAM_PRESENCE,
         ({ isTeamPresent, missingPlayerCount, taskId }) => {
@@ -59,9 +62,9 @@ class GameMapView extends Component {
         }
       );
 
-      socket.on(COMPLETE_TASK, taskId => {
-        this.props.setTaskComplete(taskId);
-      });
+      socket.on(COMPLETE_TASK, this.props.setTaskComplete);
+
+      socket.on(END_GAME, this.props.setEndGame);
     }
 
     this.setState({
@@ -69,18 +72,11 @@ class GameMapView extends Component {
     });
   }
 
-  componentDidUpdate(prevProps) {
+  async componentDidUpdate() {
+    Location.hasStartedGeofencingAsync(GEOFENCE_TASKNAME).then((bool) => console.log('geofencing ', bool));
     if (this.props.allTasks.length > 0 && this.state.geofencesSet === false) {
-      this._createGeofences();
+      await this._createGeofences();
       this.setState({ geofencesSet: true });
-    }
-
-    if (
-      prevProps.tasksRemaining > 0 &&
-      this.props.tasksRemaining === 0 &&
-      this.state.geofencesSet
-    ) {
-      this.setState({ gameOver: true });
     }
   }
 
@@ -138,24 +134,24 @@ class GameMapView extends Component {
         {this.state.gameOver &&
           // some kind of alert or modal to navigate back to main screen
           Alert.alert(
-            `Event Complete!`,
-            `You've completed all tasks in X time`,
+            `Game Over`,
+            `Thank you for playing. Your score is ${this.props.score}`,
             [
               {
                 text: 'End Game',
-                onPress: this._endGame,
+                onPress: this._exitGame,
                 style: 'cancel'
               }
             ],
-            { cancelable: true }
+            { cancelable: false }
           )}
 
         <BottomDrawer>
           <TaskList event={event} teamTasks={teamTasks} />
           <ClueCollection
-              event={event}
-              teamTasks={teamTasks}
-              endGame={() => this._endGame} />
+            event={event}
+            teamTasks={teamTasks}
+            endGame={this._endGame} />
         </BottomDrawer>
       </Container>
     );
@@ -169,7 +165,7 @@ class GameMapView extends Component {
           identifier: id.toString(),
           latitude,
           longitude,
-          radius: 15 // in meters, increase this for a real event?
+          radius: 12 // in meters, increase this for a real event?
         };
       })
     );
@@ -205,10 +201,16 @@ class GameMapView extends Component {
   };
 
   _endGame = () => {
-    Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
     this.props.endGame(this.props.eventTeamId);
-    this.props.navigation.navigate('Main');
+    this.setState({ gameOver: true });
   };
+
+  // used to leave game after it has ended
+  _exitGame = () => {
+    Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
+    this.props.navigation.navigate('Main');
+    this.props.exitGame();
+  }
 }
 
 const mapStateToProps = state => {
@@ -223,7 +225,8 @@ const mapStateToProps = state => {
     eventId: state.game.eventId,
     tasksRemaining: state.game.teamTasksRemaining,
     user: state.user,
-    endTime: state.game.endTime || state.event.activeEvent.endTime
+    endTime: state.game.endTime || state.event.activeEvent.endTime,
+    score: state.game.finalScore
   };
 };
 
@@ -234,7 +237,9 @@ const mapDispatchToProps = dispatch => {
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
     completeTask: (eventTeamId, taskId) => dispatch(completeTaskThunk(eventTeamId, taskId)),
     // update store on a COMPLETE_TASK event
-    setTaskComplete: taskId => dispatch(setTaskComplete(taskId))
+    setTaskComplete: taskId => dispatch(setTaskComplete(taskId)),
+    setEndGame: score => dispatch(setEndGame(score)),
+    exitGame: () => dispatch(exitGame())
   };
 };
 
