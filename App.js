@@ -9,6 +9,7 @@ import store from './store';
 import TaskManager from './taskManager';
 import socket from './socket';
 import AppNavigator from './navigation/AppNavigator';
+import Layout from './constants/Layout';
 
 export default class App extends React.Component {
   state = {
@@ -31,7 +32,8 @@ export default class App extends React.Component {
           <Image
             source={require('./assets/images/splash.png')}
             onLoad={this._loadResourcesAsync}
-            onError={this._handleLoadingError}
+			onError={this._handleLoadingError}
+			style={{resizeMode: 'contain', width: Layout.window.width}}
           />
         </View>
       );

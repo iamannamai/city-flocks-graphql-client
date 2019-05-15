@@ -97,19 +97,11 @@ class GameMapView extends Component {
     let { navigate } = this.props.navigation;
     let { event, allTasks, teamTasks } = this.props;
     return (
-      <Container style={{ zIndex: 2 }}>
+      <Container style={{zIndex: 2}}>
         <Countdown
-          endTime={this.props.endTime}
-          handleExpire={this._endGame}
-          styling={{
-            fontSize: 30,
-            flex: -1,
-            flexShrink: 10,
-            left: 230,
-            top: 50,
-            zIndex: 1
-          }}
-        />
+            endTime={this.props.endTime}
+            handleExpire={this._endGame}
+            styling={{ fontSize: 30, flex: -1, flexShrink: 10, left: 230, top: 50, zIndex: 1 }} />
 
         <Button
           rounded
@@ -160,7 +152,10 @@ class GameMapView extends Component {
 
         <BottomDrawer>
           <TaskList event={event} teamTasks={teamTasks} />
-          <ClueCollection clues={[]} />
+          <ClueCollection
+              event={event}
+              teamTasks={teamTasks}
+              endGame={() => this._endGame} />
         </BottomDrawer>
       </Container>
     );
@@ -181,14 +176,12 @@ class GameMapView extends Component {
   };
 
   _showTaskCompleteAlert = (isTeamPresent, taskId) => {
-    console.log(this.props.allTasks.filter(task => task.id === Number(taskId)));
+    const completedTask = this.props.allTasks.filter(task => task.id === Number(taskId))[0];
+    const {name: taskName, keyPiece} = completedTask;
     isTeamPresent
       ? Alert.alert(
           `You found a clue!`,
-          `You've made it to ${
-            this.props.allTasks.filter(task => task.id === Number(taskId))[0]
-              .name
-          } and collected the following clues: ${`ABC`}`,
+          `You've made it to ${ taskName } and collected the following clue(s): ${keyPiece.split('').join(' ')}`,
           [
             {
               text: 'Complete Task',
@@ -225,6 +218,7 @@ const mapStateToProps = state => {
     event: state.event.allEvents.filter(
       event => event.id === state.game.eventId
     )[0],
+    masterKey: state.game.masterKey,
     eventTeamId: state.game.eventTeamId,
     eventId: state.game.eventId,
     tasksRemaining: state.game.teamTasksRemaining,
@@ -238,8 +232,7 @@ const mapDispatchToProps = dispatch => {
     getTeamTasks: eventTeamId => dispatch(getTeamTasksThunk(eventTeamId)),
     getGameTasks: eventId => dispatch(getGameTasksThunk(eventId)),
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
-    completeTask: (eventTeamId, taskId) =>
-      dispatch(completeTaskThunk(eventTeamId, taskId)),
+    completeTask: (eventTeamId, taskId) => dispatch(completeTaskThunk(eventTeamId, taskId)),
     // update store on a COMPLETE_TASK event
     setTaskComplete: taskId => dispatch(setTaskComplete(taskId))
   };
