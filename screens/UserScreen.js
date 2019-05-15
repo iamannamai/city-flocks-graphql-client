@@ -253,7 +253,7 @@ class UserScreen extends Component {
         duration: 2000
       });
     else {
-      this.props.startGame(eventTeam.id);
+      this.props.startGame(eventTeam.id, this.props.user.username);
       if (this.props.eventTeamId) this._openMap();
     }
   };
@@ -299,7 +299,7 @@ const mapDispatch = dispatch => {
     getEvents: () => dispatch(getEventsThunk()),
     getMyEvents: teamId => dispatch(getMyEventsThunk(teamId)),
     setSelectedEvent: id => dispatch(setSelectedEvent(id)),
-    startGame: eventTeamId => dispatch(startGameThunk(eventTeamId)),
+    startGame: (eventTeamId, username) => dispatch(startGameThunk(eventTeamId, username)),
     setGameEvent: game => dispatch(setGameEvent(game)),
     resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
