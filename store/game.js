@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants/constants';
-import socket, { BROADCAST_GAME_START } from '../socket';
+import socket, { BROADCAST_GAME_START, BROADCAST_TASK_COMPLETE } from '../socket';
 
 /**
  * ACTION TYPES
@@ -31,17 +31,17 @@ import { defaultGame } from './defaultState';
 export const setGameEvent = game => ({ type: SET_GAME, game });
 const setGameTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTeamTasks = tasks => ({ type: SET_TEAM_TASKS, tasks});
-const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
+export const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
 const setEndGame = () => ({ type: END_GAME });
 
 /**
  * THUNK CREATORS
  */
-export const startGameThunk = eventTeamId => async dispatch => {
+export const startGameThunk = (eventTeamId, username) => async dispatch => {
   try {
     // dispatch set eventId to the selectedEvent
     const {data: game} = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/activate`);
-    socket.emit(BROADCAST_GAME_START, game);
+    socket.emit(BROADCAST_GAME_START, {game, username});
     // send request to start game
     dispatch(setGameEvent(game));
   } catch (error) {
@@ -87,7 +87,8 @@ export const getTeamTasksThunk = eventTeamId => async dispatch => {
         ...task.event_team_task,
         name: task.name,
         points: task.points,
-        description: task.description
+        description: task.description,
+        keyPiece: task.keyPiece
       }
     ));
     dispatch(setTeamTasks(tasks));
@@ -113,6 +114,7 @@ export const completeTaskThunk = (eventTeamId, taskId) => async dispatch => {
       taskId,
       completed: true
     });
+    socket.emit(BROADCAST_TASK_COMPLETE, completedTask.taskId);
     dispatch(setTaskComplete(completedTask.taskId));
   } catch (error) {
     console.error(error);
@@ -126,7 +128,8 @@ export default (state = defaultGame, action) => {
         ...state,
         eventId: action.game.eventId,
         eventTeamId: action.game.id,
-        endTime: action.game.endTime
+        endTime: action.game.endTime,
+        masterKey: action.game.masterKey
       };
     case SET_TASKS:
       return {
