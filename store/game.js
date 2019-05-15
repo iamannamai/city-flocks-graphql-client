@@ -87,7 +87,8 @@ export const getTeamTasksThunk = eventTeamId => async dispatch => {
         ...task.event_team_task,
         name: task.name,
         points: task.points,
-        description: task.description
+        description: task.description,
+        keyPiece: task.keyPiece
       }
     ));
     dispatch(setTeamTasks(tasks));
@@ -126,7 +127,8 @@ export default (state = defaultGame, action) => {
         ...state,
         eventId: action.game.eventId,
         eventTeamId: action.game.id,
-        endTime: action.game.endTime
+        endTime: action.game.endTime,
+        masterKey: action.game.masterKey
       };
     case SET_TASKS:
       return {

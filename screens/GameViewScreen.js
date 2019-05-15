@@ -54,9 +54,9 @@ class GameMapView extends Component {
 	let { event, allTasks, teamTasks } = this.props;
     return (
       <Container style={{zIndex: 2}}>
-            <Countdown 
-            endTime={this.props.endTime} 
-            handleExpire={this._endGame} 
+        <Countdown
+            endTime={this.props.endTime}
+            handleExpire={this._endGame}
             styling={{ fontSize: 30, flex: -1, flexShrink:10, left: 230, top: 50, zIndex: 1 }} />
 
         <Button
@@ -108,7 +108,10 @@ class GameMapView extends Component {
 
         <BottomDrawer>
           <TaskList event={event} teamTasks={teamTasks} />
-          <ClueCollection clues={[]} />
+          <ClueCollection
+              event={event}
+              teamTasks={teamTasks}
+              endGame={() => this._endGame} />
         </BottomDrawer>
       </Container>
     );
@@ -142,6 +145,7 @@ const mapStateToProps = state => {
     event: state.event.allEvents.filter(
       event => event.id === state.game.eventId
     )[0],
+	masterKey: state.game.masterKey,
     eventTeamId: state.game.eventTeamId,
     eventId: state.game.eventId,
     tasksRemaining: state.game.teamTasksRemaining,
