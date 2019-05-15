@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants/constants';
+import { me } from './user';
 
 /**
  * ACTION TYPES
@@ -45,6 +46,7 @@ export const createTeamThunk = teamName => async dispatch => {
   try {
     const res = await axios.post(`${BASE_URL}/api/teams`, { name: teamName });
     dispatch(createTeam(res));
+    dispatch(me());
   } catch (error) {
     console.error(error);
   }

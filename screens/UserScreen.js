@@ -32,7 +32,8 @@ import {
   resumeGameThunk,
   endGameThunk,
   setGameEvent,
-  setActiveEvent
+  setActiveEvent,
+  removeTeamThunk
 } from '../store';
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
@@ -99,7 +100,7 @@ class UserScreen extends Component {
 
   render() {
     let { allEvents, myEventIds } = this.props;
-    let { username, team } = this.props.user;
+    let { username, team, teamId } = this.props.user;
     let { navigate } = this.props.navigation;
     if (username) {
       username = username[0].toUpperCase() + username.slice(1);
@@ -125,7 +126,7 @@ class UserScreen extends Component {
             >
               <Thumbnail source={avatar} />
               <H2>{`Welcome Back ${username}!`}</H2>
-              <Text>{team && team.name}</Text>
+              <Text>{teamId && team.name}</Text>
             </CardItem>
             <CardItem style={{ justifyContent: 'center' }}>
               <Button onPress={this._signOutAsync}>
@@ -199,7 +200,7 @@ class UserScreen extends Component {
                 <Text>Team</Text>
               </CardItem>
               <CardItem>
-                <H3>{team && team.name}</H3>
+                <H3>{teamId && team.name}</H3>
               </CardItem>
               <CardItem>
                 <Left>
@@ -276,6 +277,11 @@ class UserScreen extends Component {
     });
   };
 
+  _removeTeam = () => {
+    const { id, teamId } = this.props.user;
+    this.props.removeTeam (id,teamId);
+  }
+
   _openMap = () => {
     this.props.navigation.navigate('Game');
   };
@@ -303,7 +309,8 @@ const mapDispatch = dispatch => {
     setGameEvent: game => dispatch(setGameEvent(game)),
     resumeGame: eventTeamId => dispatch(resumeGameThunk(eventTeamId)),
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
-    setActiveEvent: event => dispatch(setActiveEvent(event))
+    setActiveEvent: event => dispatch(setActiveEvent(event)),
+    removeTeam: (userId,teamId) => dispatch(removeTeamThunk(userId,teamId))
   };
 };
 

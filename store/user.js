@@ -18,7 +18,7 @@ import { defaultUser } from './defaultState';
 /**
  * ACTION CREATORS
  */
-const getUser = user => ({ type: GET_USER, user });
+export const getUser = user => ({ type: GET_USER, user });
 // const removeUser = () => ({ type: REMOVE_USER });
 const resetApp = () => ({type: RESET_APP});
 
@@ -57,6 +57,15 @@ export const logout = () => async dispatch => {
     console.error(err);
   }
 };
+
+export const removeTeamThunk = (userId,teamId) => async dispatch => {
+  try {
+    const user = await axios.put(`${BASE_URL}/api/users/${userId}/team`,teamId);
+    dispatch(getUser(user));
+  } catch (err) {
+    console.error(err);
+  }
+}
 
 /**
  * REDUCER
