@@ -194,14 +194,9 @@ class GameMapView extends Component {
               text: 'Complete Task',
               onPress: () =>
                 this.props.completeTask(this.props.eventTeamId, taskId),
-              style: 'cancel'
-            },
-            {
-              text: 'Dismiss',
-              style: 'cancel'
+              style: 'default'
             }
-          ],
-          { cancelable: true }
+          ]
         )
       : Alert.alert(
           `You've found something!`,
