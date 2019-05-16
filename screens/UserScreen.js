@@ -103,7 +103,6 @@ class UserScreen extends Component {
 		}
 
 		const events = allEvents.filter((event) => myEventIds.includes(event.id));
-		console.log('team', team);
 		return (
 			<Container>
 				<Content>
@@ -278,9 +277,8 @@ class UserScreen extends Component {
 	};
 	leaveTeam = () => {
 		let { id } = this.props.user;
-		console.log('leaving team');
+		//console.log('leaving team');
 		this.props.leaveTeam(id);
-		// this.forceUpdate();
 	};
 }
 

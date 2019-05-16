@@ -71,8 +71,7 @@ export const addUserToTeamThunk = (teamId, userId) => async (dispatch) => {
 
 export const leaveTeamThunk = (userId) => async (dispatch) => {
 	try {
-		const res = await axios.put(`${BASE_URL}/api/users/${userId}/team`);
-		console.log(res.data);
+		await axios.put(`${BASE_URL}/api/users/${userId}/team`);
 		dispatch(leaveTeam());
 	} catch (err) {
 		console.error(err);
