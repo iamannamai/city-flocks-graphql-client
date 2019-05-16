@@ -15,7 +15,8 @@ export const defaultGame = {
 	teamTasks: [],
 	teamTasksRemaining: 9999,
 	teammates: [],
-	endTime: Date.now()
+	endTime: Date.now(),
+	finalScore: 0
 };
 export const defaultTeam = {
 	myTeam: {},

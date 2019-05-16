@@ -103,6 +103,7 @@ class UserScreen extends Component {
 		}
 
 		const events = allEvents.filter((event) => myEventIds.includes(event.id));
+
 		return (
 			<Container>
 				<Content>
@@ -113,7 +114,7 @@ class UserScreen extends Component {
 							handleOnPress={this._startGame}
 						/>
 					)}
-					<Card>
+					<Card style={{ paddingTop: 32 }}>
 						<CardItem
 							style={{
 								flexDirection: 'column'
@@ -133,7 +134,7 @@ class UserScreen extends Component {
 					{this.props.activeEvent.id &&
 					this.state.showTimer && (
 						<Card>
-							<CardItem>
+							<CardItem style={{ backgroundColor: '#4dad4a' }}>
 								<Left>
 									<Countdown
 										endTime={this.props.activeEvent.endTime}
@@ -148,7 +149,7 @@ class UserScreen extends Component {
 									<Text>Your team has an active event!</Text>
 								</Left>
 								<Right>
-									<Button onPress={this._resumeGame} thumbnail>
+									<Button success outline onPress={this._resumeGame} thumbnail>
 										<Text>Resume</Text>
 									</Button>
 								</Right>
@@ -203,18 +204,17 @@ class UserScreen extends Component {
 							</CardItem>
 							<CardItem>
 								<Left>
-									<Icon type="FontAwesome" name="sign-out" />
-									<Text onPress={() => this.leaveTeam()}>Leave Team!!!</Text>
+									<Icon type="FontAwesome" name="group" />
+									<Text onPress={() => navigate('Teams')}>Manage teammates</Text>
 								</Left>
 								<Right>
 									<Icon name="arrow-forward" />
 								</Right>
 							</CardItem>
-
 							<CardItem>
 								<Left>
-									<Icon type="FontAwesome" name="group" />
-									<Text onPress={() => navigate('Teams')}>View Team-Mates!!!</Text>
+									<Icon type="FontAwesome" name="sign-out" />
+									<Text onPress={() => this.leaveTeam()}>Leave Team</Text>
 								</Left>
 								<Right>
 									<Icon name="arrow-forward" />
@@ -250,7 +250,7 @@ class UserScreen extends Component {
 				duration: 2000
 			});
 		else {
-			this.props.startGame(eventTeam.id);
+			this.props.startGame(eventTeam.id, this.props.user.username);
 			if (this.props.eventTeamId) this._openMap();
 		}
 	};
@@ -259,6 +259,7 @@ class UserScreen extends Component {
 		const { activeEvent } = this.props;
 		this.props.setSelectedEvent(activeEvent.eventId);
 		this.props.resumeGame(activeEvent.id);
+		this.setState({ showTimer: false });
 		if (this.props.eventTeamId) this._openMap();
 	};
 
@@ -301,7 +302,7 @@ const mapDispatch = (dispatch) => {
 		getEvents: () => dispatch(getEventsThunk()),
 		getMyEvents: (teamId) => dispatch(getMyEventsThunk(teamId)),
 		setSelectedEvent: (id) => dispatch(setSelectedEvent(id)),
-		startGame: (eventTeamId) => dispatch(startGameThunk(eventTeamId)),
+		startGame: (eventTeamId, username) => dispatch(startGameThunk(eventTeamId, username)),
 		setGameEvent: (game) => dispatch(setGameEvent(game)),
 		resumeGame: (eventTeamId) => dispatch(resumeGameThunk(eventTeamId)),
 		endGame: (eventTeamId) => dispatch(endGameThunk(eventTeamId)),

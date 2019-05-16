@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants/constants';
-import socket, { BROADCAST_GAME_START } from '../socket';
+import socket, { BROADCAST_GAME_START, BROADCAST_TASK_COMPLETE, BROADCAST_END_GAME } from '../socket';
 
 /**
  * ACTION TYPES
@@ -10,6 +10,7 @@ const SET_TASKS = 'SET_TASKS';
 const SET_TEAM_TASKS = 'SET_TEAM_TASKS';
 const COMPLETE_TASK = 'COMPLETE_TASK';
 const END_GAME = 'END_GAME';
+const EXIT_GAME = 'EXIT_GAME';
 
 /**
  * INITIAL STATE
@@ -31,17 +32,18 @@ import { defaultGame } from './defaultState';
 export const setGameEvent = game => ({ type: SET_GAME, game });
 const setGameTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTeamTasks = tasks => ({ type: SET_TEAM_TASKS, tasks});
-const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
-const setEndGame = () => ({ type: END_GAME });
+export const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
+export const setEndGame = score => ({ type: END_GAME, score });
+export const exitGame = () => ({ type: EXIT_GAME });
 
 /**
  * THUNK CREATORS
  */
-export const startGameThunk = eventTeamId => async dispatch => {
+export const startGameThunk = (eventTeamId, username) => async dispatch => {
   try {
     // dispatch set eventId to the selectedEvent
     const {data: game} = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/activate`);
-    socket.emit(BROADCAST_GAME_START, game);
+    socket.emit(BROADCAST_GAME_START, {game, username});
     // send request to start game
     dispatch(setGameEvent(game));
   } catch (error) {
@@ -62,8 +64,9 @@ export const resumeGameThunk = eventTeamId => async dispatch => {
 
 export const endGameThunk = (eventTeamId) => async dispatch => {
   try {
-    await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
-    dispatch(setEndGame());
+    const {data: completedGame} = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
+    socket.emit(BROADCAST_END_GAME, completedGame.score);
+    dispatch(setEndGame(completedGame.score));
   } catch (error) {
     console.error(error);
   }
@@ -87,7 +90,8 @@ export const getTeamTasksThunk = eventTeamId => async dispatch => {
         ...task.event_team_task,
         name: task.name,
         points: task.points,
-        description: task.description
+        description: task.description,
+        keyPiece: task.keyPiece
       }
     ));
     dispatch(setTeamTasks(tasks));
@@ -113,6 +117,7 @@ export const completeTaskThunk = (eventTeamId, taskId) => async dispatch => {
       taskId,
       completed: true
     });
+    socket.emit(BROADCAST_TASK_COMPLETE, completedTask.taskId);
     dispatch(setTaskComplete(completedTask.taskId));
   } catch (error) {
     console.error(error);
@@ -126,7 +131,8 @@ export default (state = defaultGame, action) => {
         ...state,
         eventId: action.game.eventId,
         eventTeamId: action.game.id,
-        endTime: action.game.endTime
+        endTime: action.game.endTime,
+        masterKey: action.game.masterKey
       };
     case SET_TASKS:
       return {
@@ -145,11 +151,16 @@ export default (state = defaultGame, action) => {
       return {
         ...state,
         teamTasks: state.teamTasks.map(task => (
-          task.id === action.taskId ? { ...task, completed: true } : task
+          task.taskId === action.taskId ? { ...task, completed: true } : task
         )),
         teamTasksRemaining: state.teamTasksRemaining - 1
       };
     case END_GAME:
+      return {
+        ...state,
+        finalScore: action.score
+      };
+    case EXIT_GAME:
       return defaultGame;
     default:
       return state;
