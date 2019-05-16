@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants/constants';
+import { me } from './user';
 
 /**
  * ACTION TYPES
@@ -73,6 +74,7 @@ export const leaveTeamThunk = (userId) => async (dispatch) => {
 	try {
 		await axios.put(`${BASE_URL}/api/users/${userId}/team`);
 		dispatch(leaveTeam());
+		dispatch(me());
 	} catch (err) {
 		console.error(err);
 	}

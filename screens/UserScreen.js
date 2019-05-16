@@ -50,7 +50,7 @@ class UserScreen extends Component {
 
 	async componentDidMount() {
 		const { teamId } = this.props.user;
-		this.props.setTeam(teamId);
+		if (teamId) this.props.setTeam(teamId);
 		// Attempt to reconcile location permissions
 		await Permissions.askAsync(Permissions.LOCATION);
 		this.props.getEvents();
