@@ -123,7 +123,7 @@ class UserScreen extends Component {
               }}
             >
                 <Thumbnail
-                  source={avataaars[this.props.user.id]}
+                  source={avataaars[(this.props.user.id % 17) + 1]}
                   style={{width: 200, height: 200}} />
               <H2>{`Welcome Back ${username}!`}</H2>
               <Text>{team && team.name}</Text>
