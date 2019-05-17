@@ -39,8 +39,7 @@ import {
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 import Countdown from '../components/Countdown';
-
-const avatar = require('../assets/images/avataaars.png');
+import { avataaars } from '../assets/images/avataaars';
 
 class UserScreen extends Component {
 	state = {
@@ -104,32 +103,34 @@ class UserScreen extends Component {
 
 		const events = allEvents.filter((event) => myEventIds.includes(event.id));
 
-		return (
-			<Container>
-				<Content>
-					{this.state.isModalVisible && (
-						<SingleEventModal
-							isModalVisible={this.state.isModalVisible}
-							hideModal={this._hideModal}
-							handleOnPress={this._startGame}
-						/>
-					)}
-					<Card style={{ paddingTop: 32 }}>
-						<CardItem
-							style={{
-								flexDirection: 'column'
-							}}
-						>
-							<Thumbnail source={avatar} />
-							<H2>{`Welcome Back ${username}!`}</H2>
-							<Text>{team && team.myTeam.name}</Text>
-						</CardItem>
-						<CardItem style={{ justifyContent: 'center' }}>
-							<Button onPress={this._signOutAsync}>
-								<Text>Sign out</Text>
-							</Button>
-						</CardItem>
-					</Card>
+        return (
+      <Container>
+        <Content>
+          {this.state.isModalVisible && (
+            <SingleEventModal
+              isModalVisible={this.state.isModalVisible}
+              hideModal={this._hideModal}
+              handleOnPress={this._startGame}
+            />
+          )}
+          <Card style={{paddingTop: 32}}>
+            <CardItem
+              style={{
+                flexDirection: 'column'
+              }}
+            >
+                <Thumbnail
+                  source={avataaars[(this.props.user.id % 17) + 1]}
+                  style={{width: 200, height: 200}} />
+              <H2>{`Welcome Back ${username}!`}</H2>
+              <Text>{team && team.myTeam.name}</Text>
+            </CardItem>
+            <CardItem style={{ justifyContent: 'center' }}>
+              <Button onPress={this._signOutAsync}>
+                <Text>Sign out</Text>
+              </Button>
+            </CardItem>
+          </Card>
 
 					{this.props.activeEvent.id &&
 					this.state.showTimer && (
