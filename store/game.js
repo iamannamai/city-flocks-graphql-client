@@ -88,6 +88,8 @@ export const getTeamTasksThunk = eventTeamId => async dispatch => {
     const tasks = teamTasks.tasks.map(task => (
       {
         ...task.event_team_task,
+        latitude: task.latitude,
+        longitude: task.longitude,
         name: task.name,
         points: task.points,
         description: task.description,

@@ -27,15 +27,15 @@ import socket, {
 } from '../socket';
 
 const timerStyle = {
-	fontSize: 30,
-	flex: -1,
-	flexShrink: 10,
-	left: 230,
-	top: 50,
-	zIndex: 1,
-	padding: 8,
-	borderRadius: 12,
-	backgroundColor: 'rgb(255, 255, 255)'
+  fontSize: 30,
+  flex: -1,
+  flexShrink: 10,
+  left: 230,
+  top: 50,
+  zIndex: 1,
+  padding: 8,
+  borderRadius: 12,
+  backgroundColor: 'rgb(255, 255, 255)'
 };
 
 class GameMapView extends Component {
@@ -85,7 +85,9 @@ class GameMapView extends Component {
   }
 
   async componentDidUpdate() {
-    Location.hasStartedGeofencingAsync(GEOFENCE_TASKNAME).then((bool) => console.log('geofencing ', bool));
+    Location.hasStartedGeofencingAsync(GEOFENCE_TASKNAME).then(bool =>
+      console.log('geofencing ', bool)
+    );
     if (this.props.allTasks.length > 0 && this.state.geofencesSet === false) {
       await this._createGeofences();
       this.setState({ geofencesSet: true });
@@ -105,11 +107,11 @@ class GameMapView extends Component {
     let { navigate } = this.props.navigation;
     let { event, allTasks, teamTasks } = this.props;
     return (
-      <Container style={{zIndex: 2}}>
-        {/* <Countdown
+      <Container style={{ zIndex: 2 }}>
+        <Countdown
             endTime={this.props.endTime}
             handleExpire={this._endGame}
-            styling={{ fontSize: 30, flex: -1, flexShrink: 10, left: 230, top: 50, zIndex: 1 }} /> */}
+            styling={{ fontSize: 30, flex: -1, flexShrink: 10, left: 230, top: 50, zIndex: 1 }} />
 
         <Button
           rounded
@@ -129,22 +131,28 @@ class GameMapView extends Component {
               longitudeDelta: event.longitudeDelta
             }}
           >
-		  <Countdown
-            endTime={this.props.endTime}
-            handleExpire={this._endGame}
-            styling={timerStyle} />
-            {allTasks &&
-              allTasks.map(task => (
-                <MapView.Marker
-                  key={task.id}
-                  coordinate={{
-                    latitude: task.latitude,
-                    longitude: task.longitude
-                  }}
-                  description={`${task.name}-${task.description}`}
-                  opacity={task.completed ? 1 : 0}
-                />
-              ))}
+            {/* <Countdown
+              endTime={this.props.endTime}
+              handleExpire={this._endGame}
+              styling={timerStyle}
+            /> */}
+
+            {teamTasks &&
+              teamTasks
+                .filter(task => task.completed)
+                .map(task => (
+                  <MapView.Marker
+                    key={task.taskId}
+                    // key={task.id}
+                    coordinate={{
+                      latitude: task.latitude,
+                      longitude: task.longitude
+                    }}
+                    pinColor="blue"
+                    title={task.name}
+                    description={task.description}
+                  />
+                ))}
           </MapView>
         )}
 
@@ -168,7 +176,8 @@ class GameMapView extends Component {
           <ClueCollection
             event={event}
             teamTasks={teamTasks}
-            endGame={this._exitGame} />
+            endGame={this._exitGame}
+          />
         </BottomDrawer>
       </Container>
     );
@@ -189,12 +198,16 @@ class GameMapView extends Component {
   };
 
   _showTaskCompleteAlert = (isTeamPresent, taskId) => {
-    const completedTask = this.props.allTasks.filter(task => task.id === Number(taskId))[0];
-    const {name: taskName, keyPiece} = completedTask;
+    const completedTask = this.props.allTasks.filter(
+      task => task.id === Number(taskId)
+    )[0];
+    const { name: taskName, keyPiece } = completedTask;
     isTeamPresent
       ? Alert.alert(
           `You found a clue!`,
-          `You've made it to ${ taskName } and collected the following clue(s): ${keyPiece.split('').join(' ')}`,
+          `You've made it to ${taskName} and collected the following clue(s): ${keyPiece
+            .split('')
+            .join(' ')}`,
           [
             {
               text: 'Complete Task',
@@ -228,7 +241,7 @@ class GameMapView extends Component {
     Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
     this.props.navigation.navigate('Main');
     this.props.exitGame();
-  }
+  };
 }
 
 const mapStateToProps = state => {
@@ -253,7 +266,8 @@ const mapDispatchToProps = dispatch => {
     getTeamTasks: eventTeamId => dispatch(getTeamTasksThunk(eventTeamId)),
     getGameTasks: eventId => dispatch(getGameTasksThunk(eventId)),
     endGame: eventTeamId => dispatch(endGameThunk(eventTeamId)),
-    completeTask: (eventTeamId, taskId) => dispatch(completeTaskThunk(eventTeamId, taskId)),
+    completeTask: (eventTeamId, taskId) =>
+      dispatch(completeTaskThunk(eventTeamId, taskId)),
     // update store on a COMPLETE_TASK event
     setTaskComplete: taskId => dispatch(setTaskComplete(taskId)),
     setEndGame: score => dispatch(setEndGame(score)),
