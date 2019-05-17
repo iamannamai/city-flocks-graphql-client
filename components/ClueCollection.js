@@ -76,10 +76,10 @@ class ClueCollection extends Component {
 				`You've guessed the final riddle and received a bonus of ${bonus} points!`,
 				[{
 				text: 'End Game',
-				onPress: this.props.endGame(),
+				onPress: this.props.endGame,
 				style: 'cancel',
 				}],
-				{ cancelable: true }
+				{ cancelable: false }
 			);
 		}
 		else {
