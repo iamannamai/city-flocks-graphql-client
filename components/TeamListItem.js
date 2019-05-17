@@ -5,8 +5,7 @@ import {
   ListItem,
   Left,
   Thumbnail,
-  Right,
-  Button
+  Button,
 } from 'native-base';
 
 import { avataaars } from '../assets/images/avataaars';
@@ -19,14 +18,12 @@ export default function TeamListItem(props) {
       </Left>
       <Body>
         <Text>{props.user.username}</Text>
+		{props.addToTeam ? (
+			<Button small onPress={props.addToTeam}>
+			<Text>Add</Text>
+			</Button>
+			) : null}
       </Body>
-      {props.addToTeam ? (
-        <Right>
-          <Button onPress={props.addToTeam}>
-            <Text>Add</Text>
-          </Button>
-        </Right>
-      ) : null}
     </ListItem>
   );
 }
