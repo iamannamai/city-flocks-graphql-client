@@ -9,7 +9,7 @@ const SET_GAME = 'SET_GAME';
 const SET_TASKS = 'SET_TASKS';
 const SET_TEAM_TASKS = 'SET_TEAM_TASKS';
 const COMPLETE_TASK = 'COMPLETE_TASK';
-const END_GAME = 'END_GAME';
+export const END_GAME = 'END_GAME';
 const EXIT_GAME = 'EXIT_GAME';
 
 /**
@@ -33,7 +33,7 @@ export const setGameEvent = game => ({ type: SET_GAME, game });
 const setGameTasks = tasks => ({ type: SET_TASKS, tasks });
 const setTeamTasks = tasks => ({ type: SET_TEAM_TASKS, tasks});
 export const setTaskComplete = taskId => ({ type: COMPLETE_TASK, taskId });
-export const setEndGame = score => ({ type: END_GAME, score });
+export const setEndGame = game => ({ type: END_GAME, game });
 export const exitGame = () => ({ type: EXIT_GAME });
 
 /**
@@ -66,7 +66,7 @@ export const endGameThunk = (eventTeamId) => async dispatch => {
   try {
     const {data: completedGame} = await axios.put(`${BASE_URL}/api/eventTeams/${eventTeamId}/complete`);
     socket.emit(BROADCAST_END_GAME, completedGame.score);
-    dispatch(setEndGame(completedGame.score));
+    dispatch(setEndGame(completedGame));
   } catch (error) {
     console.error(error);
   }
@@ -158,7 +158,7 @@ export default (state = defaultGame, action) => {
     case END_GAME:
       return {
         ...state,
-        finalScore: action.score
+        finalScore: action.game.score
       };
     case EXIT_GAME:
       return defaultGame;

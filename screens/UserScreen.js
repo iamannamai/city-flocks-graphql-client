@@ -193,6 +193,11 @@ class UserScreen extends Component {
               </CardItem>
             </TouchableOpacity>
           </Card>
+          <Card>
+            <CardItem header bordered>
+              <Text>Past Events</Text>
+            </CardItem>
+          </Card>
           <Content>
             <Card>
               <CardItem header bordered>
@@ -286,6 +291,8 @@ const mapState = state => {
     user: state.user,
     allEvents: state.event.allEvents,
     myEvents: state.event.myEvents,
+    pendingEvents: state.event.myEvents.filter(event => event.status === 'PENDING'),
+    pastEvents: state.event.myEvents.filter(event => event.status === 'COMPLETE'),
     myEventIds: state.event.myEventIds,
     selectedEventId: state.event.selectedEventId,
     eventTeamId: state.game.eventTeamId,

@@ -11,7 +11,8 @@ import {
   Icon,
   Left,
   Body,
-  Toast
+  Toast,
+  Right
 } from 'native-base';
 import { getEventsThunk, joinEventThunk, setSelectedEvent } from '../store';
 import EventsListItem from '../components/EventsListItem';
@@ -36,6 +37,7 @@ class EventsScreen extends Component {
             hideModal={this._hideModal}
             handleOnPress={() => this._handleJoinEvent(this.props.selectedEventId, this.props.teamId)}
             buttonText="Join Event"
+            disableButton={this.props.teamId === null}
           />
         )}
         <Header style={{ marginVertical: 50 }}>
@@ -50,6 +52,7 @@ class EventsScreen extends Component {
           <Body>
             <H2>All Our Events</H2>
           </Body>
+          <Right />
         </Header>
         <Card>
           <CardItem>

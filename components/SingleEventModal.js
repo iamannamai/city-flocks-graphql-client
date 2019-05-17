@@ -63,15 +63,17 @@ class SingleEventModal extends Component {
 	};
 
 	render() {
+		const { isModalVisible, hideModal, handleOnPress, disableButton, event, buttonText } = this.props;
+		const { description, duration, location } = event;
 		return (
 			<Modal
 				transparent={true}
 				backdropOpacity={0.3}
-				isVisible={this.props.isModalVisible}
-				onBackButtonPress={this.props.hideModal}
-				onBackdropPress={this.props.hideModal}
+				isVisible={isModalVisible}
+				onBackButtonPress={hideModal}
+				onBackdropPress={hideModal}
 				// onSwipeComplete={this.props.hideModal}
-				onSwipeMove={this.props.hideModal}
+				onSwipeMove={hideModal}
 				animationIn="fadeIn"
 				animationOut="fadeOut"
 				swipeDirection={[ 'up', 'left', 'right', 'down' ]}
@@ -82,8 +84,8 @@ class SingleEventModal extends Component {
 						<H3>{this.props.event.name}</H3>
 					</Body>
 					<Right>
-						<Button small onPress={this.props.handleOnPress}>
-							<Text>{this.props.buttonText || 'Start Game'}</Text>
+						<Button small disable={disableButton} onPress={handleOnPress}>
+							<Text>{buttonText || 'Start Game'}</Text>
 						</Button>
 					</Right>
 				</Header>
@@ -119,11 +121,11 @@ class SingleEventModal extends Component {
 						}}
 					>
 						<View style={styles.eventDetails}>
-							<Text style={styles.eventMeta}>{this.props.event.location}</Text>
-							<Text style={styles.eventMeta}>{`${this.props.event.duration / 3600} hr`}</Text>
+							<Text style={styles.eventMeta}>{location}</Text>
+							<Text style={styles.eventMeta}>{`${duration / 3600} hr`}</Text>
 						</View>
 						<View style={{ paddingVertical: 10 }}>
-							<Text note>{this.props.event.description}</Text>
+							<Text note>{description}</Text>
 						</View>
 					</View>
 				</Content>

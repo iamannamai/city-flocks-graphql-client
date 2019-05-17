@@ -30,7 +30,8 @@ class GameMapView extends Component {
   state = {
     geofencesSet: false,
     hasLocationPermission: false,
-    gameOver: false
+    gameOver: false,
+    timeExpire: false
   };
 
   async componentDidMount() {
@@ -64,7 +65,7 @@ class GameMapView extends Component {
 
       socket.on(COMPLETE_TASK, this.props.setTaskComplete);
 
-      socket.on(END_GAME, this.props.setEndGame);
+      socket.on(END_GAME, );
     }
 
     this.setState({
@@ -126,6 +127,7 @@ class GameMapView extends Component {
                     longitude: task.longitude
                   }}
                   description={`${task.name}-${task.description}`}
+                  opacity={task.completed ? 1 : 0}
                 />
               ))}
           </MapView>
@@ -133,25 +135,37 @@ class GameMapView extends Component {
 
         {this.state.gameOver &&
           // some kind of alert or modal to navigate back to main screen
-          Alert.alert(
-            `Game Over`,
-            `Thank you for playing. Your score is ${this.props.score}`,
-            [
-              {
+          this.state.timeExpire
+            ? Alert.alert(
+              `Time's Up`,
+              `You've run out of time to complete your tasks. Thank you for playing!`,
+              [
+                {
+                  text: 'End Game',
+                  onPress: this._exitGame,
+                  style: 'cancel'
+                }
+              ],
+              { cancelable: false }
+            )
+            : Alert.alert(
+              'You Won!',
+              'Your teammate guessed the final riddle!',
+              [{
                 text: 'End Game',
                 onPress: this._exitGame,
-                style: 'cancel'
-              }
-            ],
-            { cancelable: false }
-          )}
+                style: 'cancel',
+              }],
+              { cancelable: false }
+            )
+          }
 
         <BottomDrawer>
           <TaskList event={event} teamTasks={teamTasks} />
           <ClueCollection
             event={event}
             teamTasks={teamTasks}
-            endGame={this._endGame} />
+            endGame={this._exitGame} />
         </BottomDrawer>
       </Container>
     );
@@ -165,7 +179,7 @@ class GameMapView extends Component {
           identifier: id.toString(),
           latitude,
           longitude,
-          radius: 12 // in meters, increase this for a real event?
+          radius: 20 // in meters, increase this for a real event?
         };
       })
     );
@@ -200,17 +214,20 @@ class GameMapView extends Component {
         );
   };
 
-  _endGame = () => {
-    this.props.endGame(this.props.eventTeamId);
-    this.setState({ gameOver: true });
+  _handleTimeExpire = () => {
+    this.setState({
+      gameOver: true,
+      timeExpire: true
+    });
   };
 
   // used to leave game after it has ended
   _exitGame = () => {
     Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
+    this.props.endGame(this.props.eventTeamId);
     this.props.navigation.navigate('Main');
     this.props.exitGame();
-  }
+  };
 }
 
 const mapStateToProps = state => {

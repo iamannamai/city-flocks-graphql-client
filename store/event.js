@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { BASE_URL } from '../constants/constants';
-
+import { END_GAME } from './game';
 /**
  * ACTION TYPES
  */
@@ -103,6 +103,20 @@ export default function(state = defaultEvent, action) {
           ...action.event,
           status: 'ACTIVE'
         }
+      };
+    case END_GAME:
+      return {
+        ...state,
+        myActiveEvent: {},
+        myEvents: state.myEvents.map(event => {
+          return event.id === action.game.id
+            ? {
+              ...event,
+              score: action.game.score,
+              status: 'COMPLETE'
+            }
+            : event;
+        })
       };
     default:
       return state;
