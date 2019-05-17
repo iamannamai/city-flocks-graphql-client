@@ -126,6 +126,7 @@ class GameMapView extends Component {
                     longitude: task.longitude
                   }}
                   description={`${task.name}-${task.description}`}
+                  opacity={task.completed ? 1 : 0}
                 />
               ))}
           </MapView>
