@@ -14,7 +14,7 @@ export default function TeamListItem(props) {
   return (
     <ListItem avatar>
       <Left>
-        <Thumbnail source={avataaars[props.user.id]} />
+        <Thumbnail source={avataaars[(props.user.id % 17) + 1]} />
       </Left>
       <Body>
         <Text>{props.user.username}</Text>
