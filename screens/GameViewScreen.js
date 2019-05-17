@@ -190,7 +190,7 @@ class GameMapView extends Component {
         )
       : Alert.alert(
           `You've found something!`,
-          `Waiting for the test of your team to arrive to reveal your clue`,
+          `Waiting for the rest of your team to arrive to reveal your clue`,
           [
             {
               text: 'Dismiss',
