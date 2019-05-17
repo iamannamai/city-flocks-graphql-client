@@ -23,6 +23,7 @@ TaskManager.defineTask(GEOFENCE_TASKNAME, ({data, error}) => {
       });
     }
   } else {
+    console.log("EXITED GEOFENCEEEEE");
     // When exiting geofence, emit event to alert server to exit
     socket.emit(EXIT_GEOFENCE, {
       eventTeamId,
@@ -35,9 +36,5 @@ TaskManager.defineTask(GEOFENCE_TASKNAME, ({data, error}) => {
 const isCompleted = (teamTasks, taskId) => {
   return teamTasks.find(task => task.taskId === taskId).completed;
 };
-
-// const dispatchCompleteTask = (eventTeamId, taskId) => {
-//   store.dispatch(completeTaskThunk(eventTeamId, taskId));
-// };
 
 export default TaskManager;
