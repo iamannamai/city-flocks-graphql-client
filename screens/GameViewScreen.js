@@ -142,6 +142,7 @@ class GameMapView extends Component {
                     longitude: task.longitude
                   }}
                   description={`${task.name}-${task.description}`}
+                  opacity={task.completed ? 1 : 0}
                 />
               ))}
           </MapView>
@@ -167,7 +168,7 @@ class GameMapView extends Component {
           <ClueCollection
             event={event}
             teamTasks={teamTasks}
-            endGame={this._endGame} />
+            endGame={this._exitGame} />
         </BottomDrawer>
       </Container>
     );
@@ -205,7 +206,7 @@ class GameMapView extends Component {
         )
       : Alert.alert(
           `You've found something!`,
-          `Waiting for the test of your team to arrive to reveal your clue`,
+          `Waiting for the rest of your team to arrive to reveal your clue`,
           [
             {
               text: 'Dismiss',
@@ -223,6 +224,7 @@ class GameMapView extends Component {
 
   // used to leave game after it has ended
   _exitGame = () => {
+    this.props.endGame(this.props.eventTeamId);
     Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
     this.props.navigation.navigate('Main');
     this.props.exitGame();
