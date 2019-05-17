@@ -117,16 +117,17 @@ class GameMapView extends Component {
               longitudeDelta: event.longitudeDelta
             }}
           >
-            {allTasks &&
-              allTasks.map(task => (
+            {teamTasks &&
+              teamTasks.filter(task => task.completed).map(task => (
                 <MapView.Marker
-                  key={task.id}
+                  key={task.taskId}
                   coordinate={{
                     latitude: task.latitude,
                     longitude: task.longitude
                   }}
-                  description={`${task.name}-${task.description}`}
-                  opacity={task.completed ? 1 : 0}
+                  pinColor="blue"
+                  title={task.name}
+                  description={task.description}
                 />
               ))}
           </MapView>
