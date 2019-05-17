@@ -59,6 +59,15 @@ export const logout = () => async (dispatch) => {
 	}
 };
 
+export const removeUserTeamThunk = (userId) => async dispatch => {
+  try {
+    const res = await axios.put(`${BASE_URL}/api/users/${userId}/team`);
+    dispatch(getUser(res.data));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
 /**
  * REDUCER
  */

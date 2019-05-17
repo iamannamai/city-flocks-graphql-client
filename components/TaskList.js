@@ -32,7 +32,8 @@ const completedItemStyle = {
 const headerStyle = {
 	flexDirection: 'column',
 	alignItems: 'center',
-	marginTop: 24,
+	paddingTop: 24,
+	marginBottom: 24,
 	zIndex: 2
 };
 
@@ -48,7 +49,7 @@ const TaskList = props => {
 		<Container>
 			<Header style={headerStyle}>
 				<Title style={{fontSize: 22}}>Tasks</Title>
-				<Subtitle style={{fontSize: 16}}>
+				<Subtitle style={{fontSize: 16, marginBottom: 12}}>
 					Event: {event.name}
 				</Subtitle>
 			</Header>
