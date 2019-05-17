@@ -5,26 +5,25 @@ import {
   ListItem,
   Left,
   Thumbnail,
-  Right,
-  Button
+  Button,
 } from 'native-base';
-const avatar = require('../assets/images/avataaars.png');
+
+import { avataaars } from '../assets/images/avataaars';
+
 export default function TeamListItem(props) {
   return (
     <ListItem avatar>
       <Left>
-        <Thumbnail source={avatar} />
+        <Thumbnail source={avataaars[(props.user.id % 17) + 1]} />
       </Left>
       <Body>
         <Text>{props.user.username}</Text>
+		{props.addToTeam ? (
+			<Button small onPress={props.addToTeam}>
+			<Text>Add</Text>
+			</Button>
+			) : null}
       </Body>
-      {props.addToTeam ? (
-        <Right>
-          <Button onPress={props.addToTeam}>
-            <Text>Add</Text>
-          </Button>
-        </Right>
-      ) : null}
     </ListItem>
   );
 }

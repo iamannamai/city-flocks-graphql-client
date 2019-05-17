@@ -10,6 +10,7 @@ import TaskManager from './taskManager';
 import socket from './socket';
 import AppNavigator from './navigation/AppNavigator';
 import Layout from './constants/Layout';
+import { avataaars } from './assets/images/avataaars';
 
 export default class App extends React.Component {
   state = {
@@ -57,10 +58,7 @@ export default class App extends React.Component {
 
   _loadResourcesAsync = async () => {
     await Promise.all([
-      Asset.loadAsync([
-        require('./assets/images/robot-dev.png'),
-        require('./assets/images/robot-prod.png')
-      ]),
+      Asset.loadAsync(avataaars),
       Font.loadAsync({
         // This is the font that we are using for our tab bar
         ...Icon.Ionicons.font,
