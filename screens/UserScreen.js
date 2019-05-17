@@ -37,8 +37,7 @@ import {
 import EventsListItem from '../components/EventsListItem';
 import SingleEventModal from '../components/SingleEventModal';
 import Countdown from '../components/Countdown';
-
-const avatar = require('../assets/images/avataaars.png');
+import { avataaars } from '../assets/images/avataaars';
 
 class UserScreen extends Component {
   state = {
@@ -123,7 +122,9 @@ class UserScreen extends Component {
                 flexDirection: 'column'
               }}
             >
-              <Thumbnail source={avatar} />
+                <Thumbnail
+                  source={avataaars[this.props.user.id]}
+                  style={{width: 200, height: 200}} />
               <H2>{`Welcome Back ${username}!`}</H2>
               <Text>{team && team.name}</Text>
             </CardItem>

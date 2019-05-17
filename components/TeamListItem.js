@@ -8,12 +8,14 @@ import {
   Right,
   Button
 } from 'native-base';
-const avatar = require('../assets/images/avataaars.png');
+
+import { avataaars } from '../assets/images/avataaars';
+
 export default function TeamListItem(props) {
   return (
     <ListItem avatar>
       <Left>
-        <Thumbnail source={avatar} />
+        <Thumbnail source={avataaars[props.user.id]} />
       </Left>
       <Body>
         <Text>{props.user.username}</Text>
