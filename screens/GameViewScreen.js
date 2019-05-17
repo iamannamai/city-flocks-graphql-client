@@ -152,7 +152,7 @@ class GameMapView extends Component {
           <ClueCollection
             event={event}
             teamTasks={teamTasks}
-            endGame={this._endGame} />
+            endGame={this._exitGame} />
         </BottomDrawer>
       </Container>
     );
@@ -208,6 +208,7 @@ class GameMapView extends Component {
 
   // used to leave game after it has ended
   _exitGame = () => {
+    this.props.endGame(this.props.eventTeamId);
     Location.stopGeofencingAsync(GEOFENCE_TASKNAME);
     this.props.navigation.navigate('Main');
     this.props.exitGame();
