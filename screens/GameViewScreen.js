@@ -108,10 +108,10 @@ class GameMapView extends Component {
     let { event, allTasks, teamTasks } = this.props;
     return (
       <Container style={{ zIndex: 2 }}>
-        {/* <Countdown
+        <Countdown
             endTime={this.props.endTime}
             handleExpire={this._endGame}
-            styling={{ fontSize: 30, flex: -1, flexShrink: 10, left: 230, top: 50, zIndex: 1 }} /> */}
+            styling={{ fontSize: 30, flex: -1, flexShrink: 10, left: 230, top: 50, zIndex: 1 }} />
 
         <Button
           rounded
@@ -131,19 +131,19 @@ class GameMapView extends Component {
               longitudeDelta: event.longitudeDelta
             }}
           >
-            <Countdown
+            {/* <Countdown
               endTime={this.props.endTime}
               handleExpire={this._endGame}
               styling={timerStyle}
-            />
+            /> */}
 
-            {allTasks &&
-              allTasks
-                // .filter(task => task.completed)
+            {teamTasks &&
+              teamTasks
+                .filter(task => task.completed)
                 .map(task => (
                   <MapView.Marker
-                    // key={task.taskId}
-                    key={task.id}
+                    key={task.taskId}
+                    // key={task.id}
                     coordinate={{
                       latitude: task.latitude,
                       longitude: task.longitude
