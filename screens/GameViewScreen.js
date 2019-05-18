@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { MapView, Location, Permissions } from 'expo';
-import { Alert } from 'react-native';
+import { Alert, Image } from 'react-native';
 import { Container, Button, Icon, Toast } from 'native-base';
 import { connect } from 'react-redux';
 
@@ -25,6 +25,7 @@ import socket, {
   END_GAME,
   JOINED_GAME
 } from '../socket';
+import pin from '../assets/images/pin.png';
 
 const timerStyle = {
   fontSize: 30,
@@ -143,15 +144,17 @@ class GameMapView extends Component {
                 .map(task => (
                   <MapView.Marker
                     key={task.taskId}
-                    // key={task.id}
                     coordinate={{
                       latitude: task.latitude,
                       longitude: task.longitude
                     }}
-                    pinColor="blue"
+                    // pinColor="blue"
+                    // icon={pin}
                     title={task.name}
                     description={task.description}
-                  />
+                  >
+                    <Image source={pin} style={{height: 30, width: 30}} />
+                  </MapView.Marker>
                 ))}
           </MapView>
         )}
