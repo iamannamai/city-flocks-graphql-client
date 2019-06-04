@@ -11,6 +11,22 @@ import socket from './socket';
 import AppNavigator from './navigation/AppNavigator';
 import Layout from './constants/Layout';
 import { avataaars } from './assets/images/avataaars';
+import { BASE_URL } from './constants/constants';
+
+// Apollo GraphQL Implementation
+import { ApolloProvider } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { createHttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+
+const link = createHttpLink({
+  uri: BASE_URL
+});
+
+const client = new ApolloClient({
+  link,
+  cache: new InMemoryCache()
+});
 
 export default class App extends React.Component {
   state = {
@@ -41,12 +57,14 @@ export default class App extends React.Component {
     } else {
       return (
         <Provider store={store}>
-          <Root>
-            <View style={styles.container}>
-              {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-              <AppNavigator />
-            </View>
-          </Root>
+          <ApolloProvider client={client}>
+            <Root>
+              <View style={styles.container}>
+                {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                <AppNavigator />
+              </View>
+            </Root>
+          </ApolloProvider>
         </Provider>
       );
     }
