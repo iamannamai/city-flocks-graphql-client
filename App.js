@@ -20,7 +20,7 @@ import { createHttpLink } from 'apollo-link-http';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 
 const link = createHttpLink({
-  uri: BASE_URL
+  uri: BASE_URL + '/graphql'
 });
 
 const client = new ApolloClient({

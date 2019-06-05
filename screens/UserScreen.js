@@ -1,13 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { Permissions } from 'expo';
-
 import { Alert } from 'react-native';
-import {
-  Content,
-  Container,
-  Toast
-} from 'native-base';
+import { Content, Container, Toast } from 'native-base';
 
 import socket, { JOIN_TEAM_ROOM, GAME_START } from '../socket';
 import {
@@ -23,7 +18,13 @@ import {
   leaveTeamThunk,
   getTeamDataThunk
 } from '../store';
-import { ActiveEventCard, ManageTeamCard, SingleEventModal, UserMainCard, UserEventsCard } from '../components';
+import {
+  ActiveEventCard,
+  ManageTeamCard,
+  SingleEventModal,
+  UserMainCard,
+  UserEventsCard
+} from '../components';
 
 class UserScreen extends Component {
   state = {
@@ -32,13 +33,13 @@ class UserScreen extends Component {
   };
 
   async componentDidMount() {
-		const { teamId } = this.props.user;
-		this.props.getEvents();
+    const { teamId } = this.props.user;
+    this.props.getEvents();
 
     // Attempt to reconcile location permissions
     await Permissions.askAsync(Permissions.LOCATION);
     if (teamId) {
-			this.props.setTeam(teamId);
+      this.props.setTeam(teamId);
       this.props.getMyEvents(teamId);
       socket.emit(JOIN_TEAM_ROOM, teamId);
     }
@@ -106,28 +107,27 @@ class UserScreen extends Component {
             />
           )}
           <UserMainCard
-						user={user}
-						team={team}
-						handleSignout={this._signOutAsync}
-					/>
-					{activeEvent.id
-						&& this.state.showTimer
-						&& <ActiveEventCard
-								endTime={activeEvent.endTime}
-								handleEndGame={this._endGame}
-								handleResumeGame={this._resumeGame}
-							/>
-					}
-					<UserEventsCard
-						events={events}
-						handleShowModal={this._showModal}
-						navigate={navigate}
-					/>
-					<ManageTeamCard
-						team={team}
-						handleLeaveTeam={this._leaveTeam}
-						navigate={navigate}
-					/>
+            user={user}
+            team={team}
+            handleSignout={this._signOutAsync}
+          />
+          {activeEvent.id && this.state.showTimer && (
+            <ActiveEventCard
+              endTime={activeEvent.endTime}
+              handleEndGame={this._endGame}
+              handleResumeGame={this._resumeGame}
+            />
+          )}
+          <UserEventsCard
+            events={events}
+            handleShowModal={this._showModal}
+            navigate={navigate}
+          />
+          <ManageTeamCard
+            team={team}
+            handleLeaveTeam={this._leaveTeam}
+            navigate={navigate}
+          />
         </Content>
       </Container>
     );
@@ -156,8 +156,8 @@ class UserScreen extends Component {
         text: `You're already in a game! You can't start another game!`,
         type: 'warning',
         duration: 2000
-			});
-		} else {
+      });
+    } else {
       this.props.startGame(eventTeam.id, this.props.user.username);
       if (this.props.eventTeamId) this._openMap();
     }
@@ -183,7 +183,7 @@ class UserScreen extends Component {
 
   _openMap = () => {
     this.props.navigation.navigate('Game');
-	};
+  };
 
   _leaveTeam = () => {
     let { id } = this.props.user;
