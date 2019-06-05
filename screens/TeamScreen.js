@@ -7,10 +7,7 @@ import {
   Text,
   H1,
   H2,
-  Input,
-  Item,
-  Button,
-  List
+  Button
 } from 'native-base';
 import _ from 'lodash';
 
@@ -25,18 +22,9 @@ import {
 import { Query } from 'react-apollo';
 import gql from 'graphql-tag';
 
-import { MyTeamCard, TeamListItem } from '../components';
+import { AvailablePlayersCard, CreateTeamForm, MyTeamCard } from '../components';
 
 class TeamScreen extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      teamNameInput: ''
-    };
-
-    this.handleInputChange = this.handleInputChange.bind(this);
-  }
-
   componentDidMount() {
     if (this.props.user.teamId) {
       this.props.getAvailableUsers();
@@ -55,12 +43,6 @@ class TeamScreen extends Component {
     }
   }
 
-  handleInputChange(e) {
-    this.setState({
-      teamNameInput: e.nativeEvent.text
-    });
-  }
-
   async createTeam() {
     await this.props.createTeam(this.state.teamNameInput);
     this.props.getUserData();
@@ -72,26 +54,15 @@ class TeamScreen extends Component {
       <Content style={{ marginTop: '20%' }}>
         <H1 style={{ textAlign: 'center', fontWeight: '900' }}>Team</H1>
         <Card>
-          {user.teamId ? (
-            <CardItem style={{ flexDirection: 'column' }}>
-              <H2>{team.name}</H2>
-              <Text>{user.username}</Text>
-            </CardItem>
-          ) : (
-            <CardItem style={{ flexDirection: 'column' }}>
-              <H2 style={{ textAlign: 'center' }}>Create New Team</H2>
-              <Item regular>
-                <Input
-                  placeholder="Enter team name"
-                  value={this.state.teamNameInput}
-                  onChange={this.handleInputChange}
-                />
-              </Item>
-              <Button onPress={() => this.createTeam()}>
-                <Text>Create Team</Text>
-              </Button>
-            </CardItem>
-          )}
+					{user.teamId
+						? (
+							<CardItem style={{ flexDirection: 'column' }}>
+								<H2>{team.name}</H2>
+								<Text>{user.username}</Text>
+							</CardItem>
+						)
+						: <CreateTeamForm createTeam={this.createTeam} />
+					}
         </Card>
 
 				<MyTeamCard
@@ -99,26 +70,11 @@ class TeamScreen extends Component {
 				/>
 
         {availableUsers.length > 0 && (
-          <Card>
-            <CardItem header bordered>
-              <Text>Add a Player</Text>
-            </CardItem>
-            <CardItem>
-              <Content>
-                <List>
-                  {availableUsers.map(player => (
-                    <TeamListItem
-                      key={player.id}
-                      addToTeam={() =>
-                        this.props.addUser(user.teamId, player.id)
-                      }
-                      user={player}
-                    />
-                  ))}
-                </List>
-              </Content>
-            </CardItem>
-          </Card>
+					<AvailablePlayersCard
+						availableUsers={availableUsers}
+						handleAddUser={this.props.addUser}
+						teamId={user.teamId}
+					/>
         )}
 
         <Button onPress={() => this.props.navigation.navigate('Main')}>

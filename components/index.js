@@ -1,4 +1,6 @@
 export { default as ActiveEventCard } from './ActiveEventCard';
+export { default as AvailablePlayersCard } from './AvailablePlayersCard';
+export { default as CreateTeamForm } from './CreateTeamForm';
 export { default as ManageTeamCard } from './ManageTeamCard';
 export { default as MyTeamCard } from './MyTeamCard';
 export { default as SingleEventModal } from './SingleEventModal';
