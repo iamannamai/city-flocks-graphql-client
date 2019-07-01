@@ -1,6 +1,17 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import { connect } from 'react-redux';
-import { Content, Card, CardItem, Text, H1, H2, Button } from 'native-base';
+import {
+  Content,
+  Card,
+  CardItem,
+  Text,
+  H1,
+  H2,
+  Button,
+  Spinner
+} from 'native-base';
+import { Query } from 'react-apollo';
+import gql from 'graphql-tag';
 import _ from 'lodash';
 
 import { getTeamDataThunk, createTeamThunk, me } from '../store';
@@ -10,6 +21,21 @@ import {
   CreateTeamForm,
   MyTeamCard
 } from '../components';
+
+const USERID_QUERY = gql`
+  query UserById($userId: ID!) {
+    user(id: $userId) {
+      id
+      username
+      team {
+        id
+        name
+        __typename
+      }
+      __typename
+    }
+  }
+`;
 
 class TeamScreen extends Component {
   componentDidUpdate(prevProps) {
@@ -29,30 +55,46 @@ class TeamScreen extends Component {
   }
 
   render() {
-    const { user, team } = this.props;
+    const { user, navigation } = this.props;
+    // const { id: userId } = user;
     return (
-      <Content style={{ marginTop: '20%' }}>
-        <H1 style={{ textAlign: 'center', fontWeight: '900' }}>Team</H1>
-        <Card>
-          {user.teamId ? (
-            <CardItem style={{ flexDirection: 'column' }}>
-              {/* replace this with user - team, or team request from server */}
-              <H2>{team.name}</H2>
-              <Text>{user.username}</Text>
-            </CardItem>
-          ) : (
-            <CreateTeamForm createTeam={this.createTeam} userId={user.id} />
-          )}
-        </Card>
+      <Query query={USERID_QUERY} variables={{ userId: user.id }}>
+        {({ data, error, loading, variables }) => {
+          if (error) return <Text>{error}</Text>;
+          if (loading) return <Spinner />;
+          console.log(variables);
+          const { id: myId, team, username } = data.user;
+          const { id: teamId, name: teamName } = team;
 
-        <MyTeamCard teamId={this.props.user.teamId} />
+          return (
+            <Content style={{ marginTop: '20%' }}>
+              <H1 style={{ textAlign: 'center', fontWeight: '900' }}>Team</H1>
+              {teamId ? (
+                <Fragment>
+                  <Card>
+                    <CardItem style={{ flexDirection: 'column' }}>
+                      {/* replace this with user - team, or team request from server */}
+                      <H2>{teamName}</H2>
+                      <Text>{username}</Text>
+                    </CardItem>
+                  </Card>
+                  <MyTeamCard teamId={teamId} />
+                  <AvailablePlayersCard teamId={teamId} />
+                </Fragment>
+              ) : (
+                <Card>
+                  {/* Pass in a refetch function to refetch user data? */}
+                  <CreateTeamForm createTeam={this.createTeam} userId={myId} />
+                </Card>
+              )}
 
-        <AvailablePlayersCard teamId={user.teamId} />
-
-        <Button onPress={() => this.props.navigation.navigate('Main')}>
-          <Text>Back</Text>
-        </Button>
-      </Content>
+              <Button onPress={() => navigation.navigate('Main')}>
+                <Text>Back</Text>
+              </Button>
+            </Content>
+          );
+        }}
+      </Query>
     );
   }
 }

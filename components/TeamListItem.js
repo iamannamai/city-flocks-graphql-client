@@ -58,7 +58,7 @@ export default function TeamListItem(props) {
           query: GET_AVAILABLE_USERS,
           data: {
             availableUsers: availableUsers.filter(
-              user => user.id !== addUserToTeam.id
+              player => player.id !== addUserToTeam.id
             )
           }
         });
