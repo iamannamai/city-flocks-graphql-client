@@ -11,6 +11,31 @@ import socket from './socket';
 import AppNavigator from './navigation/AppNavigator';
 import Layout from './constants/Layout';
 import { avataaars } from './assets/images/avataaars';
+import { BASE_URL } from './constants/constants';
+
+// Apollo GraphQL Implementation
+import { ApolloProvider } from 'react-apollo';
+import { ApolloClient } from 'apollo-client';
+import { createHttpLink } from 'apollo-link-http';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { onError } from 'apollo-link-error';
+
+const httpLink = createHttpLink({
+  uri: BASE_URL + '/graphql'
+});
+
+const errorLink = onError(({ graphQLErrors }) => {
+  if (graphQLErrors) graphQLErrors.map(({ message }) => console.log(message));
+});
+
+const client = new ApolloClient({
+  link: errorLink.concat(httpLink),
+  cache: new InMemoryCache({
+    // To normalize the data so any node can be fetched from apollo cache no matter which query initiated the read
+    dataIdFromObject: object => `${object.__typename}_${object.id}`
+  }),
+  addTypename: true
+});
 
 export default class App extends React.Component {
   state = {
@@ -41,12 +66,14 @@ export default class App extends React.Component {
     } else {
       return (
         <Provider store={store}>
-          <Root>
-            <View style={styles.container}>
-              {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
-              <AppNavigator />
-            </View>
-          </Root>
+          <ApolloProvider client={client}>
+            <Root>
+              <View style={styles.container}>
+                {Platform.OS === 'ios' && <StatusBar barStyle="default" />}
+                <AppNavigator />
+              </View>
+            </Root>
+          </ApolloProvider>
         </Provider>
       );
     }
