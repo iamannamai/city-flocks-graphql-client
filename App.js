@@ -21,7 +21,8 @@ import { InMemoryCache } from 'apollo-cache-inmemory';
 import { onError } from 'apollo-link-error';
 
 const httpLink = createHttpLink({
-  uri: BASE_URL + '/graphql'
+  uri: BASE_URL + '/graphql',
+  credentials: 'include'
 });
 
 const errorLink = onError(({ graphQLErrors }) => {
@@ -58,8 +59,8 @@ export default class App extends React.Component {
           <Image
             source={require('./assets/images/splash.png')}
             onLoad={this._loadResourcesAsync}
-			onError={this._handleLoadingError}
-			style={{resizeMode: 'contain', width: Layout.window.width}}
+            onError={this._handleLoadingError}
+            style={{ resizeMode: 'contain', width: Layout.window.width }}
           />
         </View>
       );

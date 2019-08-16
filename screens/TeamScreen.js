@@ -56,13 +56,12 @@ class TeamScreen extends Component {
 
   render() {
     const { user, navigation } = this.props;
-    // const { id: userId } = user;
     return (
       <Query query={USERID_QUERY} variables={{ userId: user.id }}>
-        {({ data, error, loading, variables }) => {
+        {({ data, error, loading }) => {
           if (error) return <Text>{error}</Text>;
           if (loading) return <Spinner />;
-          console.log(variables);
+
           const { id: myId, team, username } = data.user;
           const { id: teamId, name: teamName } = team;
 
